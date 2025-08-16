@@ -29,7 +29,7 @@ export function configurePassport() {
         try {
             const user = await oauthService.findOrCreateUser(profile, 'google');
             return done(null, user);
-        } catch (error:any) {
+        } catch (error: any) {
             logger.error('Google OAuth error:', error);
             return done(error as Error, undefined);
         }
