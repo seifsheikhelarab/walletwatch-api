@@ -1,5 +1,6 @@
 import mongoose, { Document, Model, Schema, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
+import { IExpense } from './expense.model.js';
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
@@ -10,6 +11,9 @@ export interface IUser extends Document {
   oauth?: 'google' | null;
   createdAt: Date;
   checkPassword: (candidatePassword: string) => Promise<boolean>;
+  getExpenses: (startDate?: Date, endDate?: Date) => Promise<IExpense[]>;
+  getBudgetStatus: () => Promise<{ totalExpenses: number; budgetStatus: string }>;
+  getSavingGoalsStatus(): () => Promise<{ totalSavings: number; savingsStatus: string }>;
 }
 
 export interface IUserModel extends Model<IUser> { };
@@ -64,6 +68,18 @@ userSchema.methods.checkPassword = async function (
   if (!this.password) return false;
   return await bcrypt.compare(candidatePassword, this.password);
 };
+
+userSchema.methods.getExpenses = async function (
+  this: IUser,
+  startDate?: Date,
+  endDate?: Date
+): Promise<IExpense[]> {
+  const query: any = { userId: this._id };
+  if (startDate) query.CreatedAt = { $gte: startDate };
+  if (endDate) query.CreatedAt = { $lte: endDate };
+
+  return await mongoose.model<IExpense>('Expense').find(query).exec();
+}
 
 const User = mongoose.model<IUser, IUserModel>('User', userSchema);
 
