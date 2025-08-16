@@ -1,5 +1,4 @@
 import mongoose, { Document, Model, Schema, Types } from 'mongoose';
-import bcrypt from 'bcrypt';
 
 export interface IExpense extends Document {
   _id: Types.ObjectId;
@@ -43,3 +42,54 @@ const expenseSchema = new Schema<IExpense, IExpenseModel>({
     default: Date.now
   }
 });
+
+expenseSchema.methods.getByCategory = async function (userId: Types.ObjectId, category: string, startDate: Date, endDate: Date): Promise<IExpense[]> {
+  return this.model('Expense').find({
+    userId,
+    category,
+    CreatedAt: {
+      $gte: startDate,
+      $lte: endDate
+    }
+  });
+};
+
+expenseSchema.methods.getMonthlySummary = async function (userId: Types.ObjectId, startDate: Date): Promise<Object[]> {
+  const expenses = await this.model('Expense').find({
+    userId,
+    CreatedAt: {
+      $gte: startDate,
+      $lte: new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0)
+    }
+  });
+
+  let summary: { category: string; amount: number }[] = [];
+  for (const expense of expenses) {
+    const category = expense.category;
+    const amount = expense.amount;
+    let existingCategory = summary.find((item) => item.category === category);
+    if (existingCategory) {
+      existingCategory.amount += amount;
+    } else {
+      summary.push({ category, amount });
+    }
+  }
+
+  return summary;
+}
+
+expenseSchema.methods.getTotalSpent = async function (userId: Types.ObjectId, startDate: Date, endDate: Date): Promise<number> {
+  const expenses = await this.model('Expense').find({
+    userId,
+    CreatedAt: {
+      $gte: startDate,
+      $lte: endDate
+    }
+  });
+
+  return expenses.reduce((total: number, expense: IExpense) => total + expense.amount, 0);
+}
+
+export const Expense = mongoose.model<IExpense, IExpenseModel>('User', expenseSchema);
+
+export default Expense;

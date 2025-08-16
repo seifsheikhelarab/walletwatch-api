@@ -9,6 +9,7 @@ export interface IUser extends Document {
   password: string;
   income: number;
   oauth?: 'google' | null;
+  oauthId?: string;
   createdAt: Date;
   checkPassword: (candidatePassword: string) => Promise<boolean>;
   getExpenses: (startDate?: Date, endDate?: Date) => Promise<IExpense[]>;
@@ -47,11 +48,17 @@ const userSchema = new Schema<IUser, IUserModel>({
     enum: ['google', null],
     default: null
   },
+  oauthId: {
+    type: String,
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
+
+userSchema.index({ email: 1 }, { unique: true });
 
 userSchema.pre<IUser>('save', async function (next) {
   if (this.isModified('password') || this.isNew) {
@@ -81,6 +88,6 @@ userSchema.methods.getExpenses = async function (
   return await mongoose.model<IExpense>('Expense').find(query).exec();
 }
 
-const User = mongoose.model<IUser, IUserModel>('User', userSchema);
+export const User = mongoose.model<IUser, IUserModel>('User', userSchema);
 
 export default User;
