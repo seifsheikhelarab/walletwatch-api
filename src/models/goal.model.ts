@@ -43,6 +43,18 @@ const goalSchema = new Schema<IGoal, IGoalModel>({
   }
 });
 
+goalSchema.methods.calculateProgress = function (): number {
+  return (this.currentAmount / this.targetAmount) * 100;
+};
+
+goalSchema.methods.isAchieved = function (): boolean {
+  return this.currentAmount >= this.targetAmount;
+};
+
+goalSchema.methods.isExpired = function (): boolean {
+  return new Date() > this.deadline;
+};
+
 export const Goal = mongoose.model<IGoal, IGoalModel>('User', goalSchema);
 
 export default Goal;
