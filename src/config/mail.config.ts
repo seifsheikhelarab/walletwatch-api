@@ -26,7 +26,30 @@ export const emailTemplates = {
             <p>Thank you for joining WalletWatch. We're excited to help you manage your Budgets and expenses more efficiently.</p>
             <p>Visit your dashboard: <a href="${process.env.APP_URL!}/">Click here</a></p>
         `
+    }),
+
+    overspending: (firstName: string, percentage: number, amount: number) => ({
+        subject: 'Budget Overspending Alert',
+        html: `
+            <h2>Budget Overspending Alert</h2>
+            <p>Hi ${firstName},</p>
+            <p>We noticed that you have overspent your budget by ${percentage.toFixed(2)}%.</p>
+            <p>You have spent a total of $${amount.toFixed(2)}.</p>
+            <p>Please review your budget and expenses to avoid further overspending.</p>
+        `
+    }),
+    reminder: () => ({
+        subject: 'Budget Reminder',
+        html: `<p>Reminder: Don’t forget to log today’s expenses in your Smart Budget Tracker.</p>  
+<p>Keeping your expenses updated helps you stay within your budget and track your saving goals.</p>`
+    }),
+    report: () => ({
+        subject: `Monthly Budget Report`,
+        html: `<p>Hi,</p>
+        <p>Here is your monthly budget report:</p>
+        `
     })
+
 };
 
 export const sendEmail = async (to: string, subject: string, html: string) => {

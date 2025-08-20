@@ -10,7 +10,7 @@ import middlewareSetup from "./config/middleware.config.js";
 import sessionSetup from "./config/session.config.js";
 import { configurePassport } from "./config/passport.config.js";
 import { logger } from "./config/logger.config.js";
-// import swaggerSetup from "./config/swagger.config.js";
+import swaggerSetup from "./config/swagger.config.js";
 
 const app = express();
 
@@ -29,10 +29,10 @@ app.use(passport.session());
 middlewareSetup(app);
 
 //Setup Swagger Docs
-// swaggerSetup(app);
+swaggerSetup(app);
 
 // Routes
-app.use(router);
+app.use("/api", router);
 
 // Start server
 const port = process.env.PORT || 3000;

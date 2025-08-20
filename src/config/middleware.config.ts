@@ -1,8 +1,6 @@
 //Configuration for various Middleware used
 //Morgan is used for logging requests
 //Method-override is used for DELETE, PUT, etc.
-//AttachUserToViews is used to attach the current user to all views
-//EJS is used to send dynamic pages
 
 import { Application } from "express";
 import express from "express";

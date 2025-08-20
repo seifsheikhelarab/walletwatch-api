@@ -32,8 +32,4 @@ const notificationSchema = new Schema<INotification, INotificationModel>({
   }
 });
 
-// notificationSchema.methods.sendMail = async function (){
-
-// }
-
 export const Notification = mongoose.model<INotification, INotificationModel>('Notification', notificationSchema);
