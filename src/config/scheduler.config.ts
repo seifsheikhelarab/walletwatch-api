@@ -3,10 +3,12 @@ import { emailTemplates, sendEmail } from './mail.config.js';
 import User from '../models/user.model.js';
 import { logger } from './logger.config.js';
 import { Notification } from '../models/notification.model.js';
+import Budget from '../models/budget.model.js';
 
 function sendReportEmailMonthly() {
   // Every month on the 1st at 10 AM
   cron.schedule("0 10 1 * *", async () => {
+    logger.info('Sending monthly budget report emails...');
     let users = await User.find();
     for (let user of users) {
       await sendEmail(user.email, emailTemplates.report().subject, emailTemplates.report().html);
@@ -24,10 +26,16 @@ function sendReportEmailMonthly() {
 }
 
 function sendReminderEmailDaily() {
+
   // Every day at 8 PM
   cron.schedule("0 20 * * *", async () => {
+
+    logger.info('Sending daily budget reminder emails...');
+
     let users = await User.find();
+
     for (let user of users) {
+
       await sendEmail(user.email, emailTemplates.reminder().subject, emailTemplates.reminder().html);
 
       let reminder = new Notification({
@@ -36,28 +44,39 @@ function sendReminderEmailDaily() {
         message: "This is your daily budget reminder.",
         sentAt: new Date()
       });
+
+      await reminder.save();
     }
+
     logger.info('Daily budget reminder emails sent successfully.');
+
   });
 }
 
-//To do
-// function sendOverspendingAlert() {
-//   // Every day at 8 PM
-//   cron.schedule("0 20 * * *", async () => {
-//     let users = await User.find();
-//     for (let user of users) {
-//       let 
-//       if (user.spent > user.budget) {
-//         await sendEmail(user.email, emailTemplates.overspending().subject, emailTemplates.overspending().html);
-//       }
-//     }
-//     logger.info('Overspending alerts sent successfully.');
-//   });
-// }
+function sendOverspendingAlert() {
+
+  cron.schedule("0 9 * * *", async () => {
+
+    logger.info('Checking for overspending alerts...');
+    let users = await User.find();
+
+    for (let user of users) {
+      let budgets = await Budget.find({ userId: user._id });
+      for (let budget of budgets) {
+        if (await budget.isOverspent()) {
+          await sendEmail(user.email,
+            emailTemplates.overspending(user.name, await budget.getUsagePercentage(), await budget.calculateSpent()).subject,
+            emailTemplates.overspending(user.name, await budget.getUsagePercentage(), await budget.calculateSpent()).html
+          );
+        }
+      }
+    }
+    logger.info('Overspending alerts checked successfully.');
+  })
+}
 
 export default function schedulerSetup() {
   sendReportEmailMonthly();
   sendReminderEmailDaily();
-  // sendOverspendingAlert(); // Uncomment when implemented
+  sendOverspendingAlert();
 }

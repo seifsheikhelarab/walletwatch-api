@@ -9,6 +9,9 @@ export interface IGoal extends Document {
   deadline: Date;
   status: 'active' | 'achieved' | 'failed';
   createdAt: Date;
+  calculateProgress(): number;
+  isAchieved(): boolean;
+  isExpired(): boolean;
 }
 
 export interface IGoalModel extends Model<IGoal> { };

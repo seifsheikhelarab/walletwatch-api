@@ -8,7 +8,11 @@ export interface IExpense extends Document {
   description?: string;
   CreatedAt: Date;
   UpdatedAt: Date;
+  getByCategory(userId: Types.ObjectId, category: string, startDate: Date, endDate: Date): Promise<IExpense[]>;
+  getMonthlySummary(userId: Types.ObjectId, startDate: Date): Promise<Object[]>;
+  getTotalSpent(userId: Types.ObjectId, startDate: Date, endDate: Date): Promise<number>;
 };
+
 
 export interface IExpenseModel extends Model<IExpense> { };
 

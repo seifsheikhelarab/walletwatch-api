@@ -9,6 +9,10 @@ export interface IBudget extends Document {
   endDate: Date;
   spent: number;
   createdAt: Date;
+  calculateSpent(startDate?: Date, endDate?: Date): Promise<number>;
+  isOverspent(startDate?: Date, endDate?: Date): Promise<boolean>;
+  remainingBudget(): Promise<number>;
+  getUsagePercentage(): Promise<number>;
 }
 
 export interface IBudgetModel extends Model<IBudget> { };
@@ -61,8 +65,8 @@ budgetSchema.methods.calculateSpent = async function (startDate?: Date, endDate?
 
 };
 
-budgetSchema.methods.isOverspent = async function (): Promise<boolean> {
-  const spent = await this.calculateSpent();
+budgetSchema.methods.isOverspent = async function (startDate?: Date, endDate?: Date): Promise<boolean> {
+  const spent = await this.calculateSpent(startDate, endDate);
   return spent > this.amount;
 };
 
