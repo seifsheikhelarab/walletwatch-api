@@ -2,34 +2,26 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-import passport from "passport";
 
 import { router } from "./routes.js";
+
 import databaseSetup from "./config/database.config.js";
 import middlewareSetup from "./config/middleware.config.js";
 import sessionSetup from "./config/session.config.js";
-import { configurePassport } from "./config/passport.config.js";
-import { logger } from "./config/logger.config.js";
+import passportSetup from "./config/passport.config.js";
 import swaggerSetup from "./config/swagger.config.js";
+import schedulerSetup from "./config/scheduler.config.js";
+import { logger } from "./config/logger.config.js";
 
 const app = express();
 
-// Setup database
+// Core configurations
 databaseSetup();
-
-// Setup session first
 sessionSetup(app);
-
-// Setup passport
-configurePassport();
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Setup other middleware
+passportSetup(app);
 middlewareSetup(app);
-
-//Setup Swagger Docs
 swaggerSetup(app);
+schedulerSetup();
 
 // Routes
 app.use("/api", router);

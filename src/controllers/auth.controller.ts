@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { logger } from "../config/logger.config.js";
 import User, { IUser } from "../models/user.model.js";
-import { Types } from "mongoose";
 
 declare module "express-session" {
   interface SessionData {

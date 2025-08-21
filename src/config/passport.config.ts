@@ -4,8 +4,14 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { User } from '../models/user.model.js';
 import { logger } from './logger.config.js';
+import { Application } from 'express';
 
-export function configurePassport() {
+export default function passportSetup(app: Application) {
+
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+
     passport.serializeUser((user: any, done) => {
         done(null, user.id);
     });

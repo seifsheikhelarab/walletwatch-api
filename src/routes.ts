@@ -1,9 +1,32 @@
 import express from "express";
 import passport from "passport";
-import { registerController, loginController, googleCallbackController } from "./controllers/auth.controller.js";
-import { getExpenses, addExpense, getExpenseById, updateExpense, deleteExpense } from "./controllers/budget.controller.js";
-import { getBudgets, setBudget, getGoals, setGoal } from "./controllers/expenses.controller.js";
-import { getWeeklyReports, getMonthlyReports, getNotifications } from "./controllers/report.controller.js";
+
+import {
+  registerController,
+  loginController,
+  googleCallbackController
+} from "./controllers/auth.controller.js";
+
+import {
+  getExpenses,
+  addExpense,
+  getExpenseById,
+  updateExpense,
+  deleteExpense
+} from "./controllers/budget.controller.js";
+
+import {
+  getBudgets,
+  setBudget,
+  getGoals,
+  setGoal
+} from "./controllers/expenses.controller.js";
+
+import {
+  getWeeklyReports,
+  getMonthlyReports,
+  getNotifications
+} from "./controllers/report.controller.js";
 
 export const router = express.Router();
 

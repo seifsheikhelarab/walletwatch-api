@@ -115,22 +115,14 @@ export default function swaggerSetup(app: Application) {
                                 type: 'string',
                                 example: '507f1f77bcf86cd799439011'
                             },
-                            firstName: {
+                            name: {
                                 type: 'string',
-                                example: 'John'
-                            },
-                            lastName: {
-                                type: 'string',
-                                example: 'Doe'
+                                example: 'John Scott'
                             },
                             email: {
                                 type: 'string',
                                 format: 'email',
                                 example: 'john.doe@example.com'
-                            },
-                            avatar: {
-                                type: 'string',
-                                example: 'https://example.com/avatars/john.jpg'
                             },
                             bio: {
                                 type: 'string',
