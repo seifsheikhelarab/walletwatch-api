@@ -13,18 +13,17 @@ import {
   getExpenseById,
   updateExpense,
   deleteExpense
-} from "./controllers/budget.controller.js";
+} from "./controllers/expense.controller.js";
 
 import {
   getBudgets,
   setBudget,
   getGoals,
   setGoal
-} from "./controllers/expenses.controller.js";
+} from "./controllers/budget.controller.js";
 
 import {
-  getWeeklyReports,
-  getMonthlyReports,
+  getReports,
   getNotifications
 } from "./controllers/report.controller.js";
 
@@ -56,6 +55,5 @@ router.route("/goals")
   .post(setGoal);
 
 //Reports and Notifications
-router.get("/reports/weekly", getWeeklyReports);
-router.get("/reports/monthly", getMonthlyReports);
+router.get("/reports", getReports);
 router.get("/notifications", getNotifications);

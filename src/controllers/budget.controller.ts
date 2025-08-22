@@ -1,108 +1,82 @@
 import { Request, Response } from "express";
 import { logger } from "../config/logger.config.js";
-import User from "../models/user.model.js";
-import Expense from "../models/expense.model.js";
+import Budget from "../models/budget.model.js";
+import Goal from "../models/goal.model.js";
 
-export const getExpenses = async (req: Request, res: Response) => {
-
+export const getBudgets = async (req: Request, res: Response) => {
   try {
-    const userId = req.session.userId;
+    let userId = req.session.userId;
+    let budgets = await Budget.find({ userId });
 
-    let user = await User.findById(userId);
-
-    let expenses = Expense.find({ userId: user!._id });
-
-    res.status(200).json({ expenses });
+    if (budgets) {
+      res.status(200).json({ budgets });
+    } else {
+      res.status(404).json({ message: "No budgets found" });
+    }
 
   } catch (error: any) {
-    logger.error(`Error fetching expenses: ${error.message}`);
+    logger.error(`Error fetching budgets: ${error.message}`);
     res.status(500).json({ message: "Internal server error" });
   }
 }
 
-export const addExpense = async (req: Request, res: Response) => {
-  try {
-    let { amount, category, description } = req.body;
+export const setBudget = async (req: Request, res: Response) => {
 
-    let expense = new Expense({
-      userId: req.session.userId,
+  try {
+    let { type, amount, startDate, endDate } = req.body;
+    let userId = req.session.userId;
+    let budget = new Budget({
+      userId,
+      type,
       amount,
-      category,
-      description
+      startDate,
+      endDate
     });
 
-    await expense.save();
+    await budget.save();
 
-    res.status(201).json({ message: "Expense added successfully" });
+    res.status(201).json({ message: "Budget set successfully" });
 
   } catch (error: any) {
-    logger.error(`Error adding expense ${error.message}`);
-    res.status(500).json({ message: "Internal Server Error" })
+    logger.error(`Error setting budget: ${error.message}`);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
-export const getExpenseById = async (req: Request, res: Response) => {
-
+export const getGoals = async (req: Request, res: Response) => {
   try {
     let userId = req.session.userId;
-    let { id } = req.body;
+    let goals = await Goal.find({ userId });
 
-    let expense = await Expense.find({
-      _id: id,
-      userId
-    });
-
-    if (expense) {
-      res.status(200).send(expense);
+    if (goals) {
+      res.status(200).json({ goals });
     } else {
-      res.status(404).json({ message: "Expense not found" });
+      res.status(404).json({ message: "No goals found" });
     }
+
   } catch (error: any) {
-    logger.error(`Error getting expense ${error.message}`);
-    res.status(500).json({ message: "Internal Server Error" })
-  }
-
-
-}
-
-export const updateExpense = async (req: Request, res: Response) => {
-
-  try {
-    let { id, amount, category, description } = req.body;
-    let userId = req.session.userId;
-
-    let expense = await Expense.findOneAndUpdate(
-      { _id: id, userId },
-      { amount, category, description, UpdatedAt: new Date() });
-
-    if (expense) {
-      res.status(200).json({ message: "Expense updated successfully" });
-    } else {
-      res.status(404).json({ message: "Expense not found" });
-    }
-  } catch (error: any) {
-    logger.error(`Error updating expense: ${error.message}`);
+    logger.error(`Error fetching goals: ${error.message}`);
     res.status(500).json({ message: "Internal server error" });
   }
 }
 
-export const deleteExpense = async (req: Request, res: Response) => {
-
+export const setGoal = async (req: Request, res: Response) => {
   try {
+    let { title, targetAmount, currentAmount, deadline } = req.body;
     let userId = req.session.userId;
-    let { ExpenseId } = req.body;
+    let goal = new Goal({
+      userId,
+      title,
+      targetAmount,
+      currentAmount,
+      deadline
+    });
 
-    let expense = await Expense.findOneAndDelete({ _id: ExpenseId, userId: userId });
+    await goal.save();
 
-    if (expense) {
-      res.status(200).json({ message: "Expense deleted successfully" });
-    } else {
-      res.status(404).json({ message: "Expense not found" });
-    }
+    res.status(201).json({ message: "Goal set successfully" });
   } catch (error: any) {
-    logger.error(`Error deleting expense: ${error.message}`);
-    res.status(500).json({ message: "Internal server error" });
+    logger.error(`Error setting goal: ${error.message}`);
+    res.status(500).json({ message: "Internal Server Error" });
   }
-
-
 }
