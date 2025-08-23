@@ -25,7 +25,7 @@ src/
     mail.config.ts        # Mail service config
     middleware.config.ts  # Middleware config
     passport.config.ts    # Passport.js config
-    scheduler.config.ts   # Task scheduler config
+    scheduler.config.ts   # Notification scheduler config
     session.config.ts     # Session management config
     swagger.config.ts     # Swagger API docs config
   controllers/            # Route controllers
@@ -51,7 +51,7 @@ src/
 
 - Node.js (v16+ recommended)
 - npm
-- MongoDB or your chosen database
+- MongoDB
 
 ### Installation
 
@@ -61,7 +61,7 @@ npm install
 
 ### Configuration
 
-Edit files in `src/config/` to set up database, mail, logger, and other services as needed.
+Edit enviroment variables in `.env` to set up services as needed.
 
 ### Running the API
 
@@ -77,7 +77,7 @@ npm run dev
 
 ### API Documentation
 
-Swagger documentation is available at `/api-docs` when the server is running. See `swagger.json` and `src/config/swagger.config.ts` for details.
+Swagger documentation is available at `/docs` when the server is running. See `swagger.json` and `src/config/swagger.config.ts` for details.
 
 ## Usage
 
