@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { logger } from "../config/logger.config.js";
 import User, { IUser } from "../models/user.model.js";
+import { validationResult } from "express-validator";
 
 declare module "express-session" {
   interface SessionData {
@@ -9,15 +10,21 @@ declare module "express-session" {
   }
 }
 
+
 export const registerController = async (req: Request, res: Response) => {
   try {
     let { name, email, password, income } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email, and password are required" });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    } 
+    let existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: "Email already in use" });
     }
-
     let user = await User.create({ name, email, password, income });
+    req.session.userId = user._id.toString();
     res.status(201).json({ message: "User registered successfully", user });
     logger.info(`User registered: ${user.email}`);
   } catch (error: any) {
@@ -53,6 +60,17 @@ export const loginController = async (req: Request, res: Response) => {
 
   } catch (error: any) {
     logger.error(`Error logging in user: ${error.message}`);
+    res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export const logoutController = (req: Request, res: Response) => {
+  try { 
+    req.session.destroy(err => logger.error(err));
+    res.clearCookie('connect.sid');
+    res.status(200).json({ message: "Logout successful" });
+  }catch(error: any){
+    logger.error(`Error logging out user: ${error.message}`);
     res.status(500).json({ message: "Internal server error" });
   }
 }

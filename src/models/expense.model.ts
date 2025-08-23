@@ -94,6 +94,6 @@ expenseSchema.methods.getTotalSpent = async function (userId: Types.ObjectId, st
   return expenses.reduce((total: number, expense: IExpense) => total + expense.amount, 0);
 }
 
-export const Expense = mongoose.model<IExpense, IExpenseModel>('User', expenseSchema);
+export const Expense = mongoose.model<IExpense, IExpenseModel>('Expense', expenseSchema);
 
 export default Expense;

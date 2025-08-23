@@ -58,6 +58,6 @@ goalSchema.methods.isExpired = function (): boolean {
   return new Date() > this.deadline;
 };
 
-export const Goal = mongoose.model<IGoal, IGoalModel>('User', goalSchema);
+export const Goal = mongoose.model<IGoal, IGoalModel>('Goal', goalSchema);
 
 export default Goal;

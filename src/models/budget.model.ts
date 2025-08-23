@@ -80,6 +80,6 @@ budgetSchema.methods.getUsagePercentage = async function (): Promise<number> {
   return (spent / this.amount) * 100;
 };
 
-export const Budget = mongoose.model<IBudget, IBudgetModel>('User', budgetSchema);
+export const Budget = mongoose.model<IBudget, IBudgetModel>('Budget', budgetSchema);
 
 export default Budget;

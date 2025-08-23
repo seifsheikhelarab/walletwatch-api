@@ -6,7 +6,7 @@ export interface IUser extends Document {
   _id: Types.ObjectId;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   income: number;
   oauth?: 'google' | null;
   oauthId?: string;
@@ -61,6 +61,7 @@ const userSchema = new Schema<IUser, IUserModel>({
 userSchema.index({ email: 1 }, { unique: true });
 
 userSchema.pre<IUser>('save', async function (next) {
+  if (this.password === undefined) return next();
   if (this.isModified('password') || this.isNew) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);

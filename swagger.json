@@ -1,0 +1,401 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "WalletWatch API",
+    "description": "API documentation for WalletWatch, a Budgeting and Expense Tracking Application made with Express.js and TypeScript.",
+    "contact": {
+      "email": "seifusama@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/license/mit/"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4650",
+      "description": "Local development server"
+    }
+  ],
+  "tags": [
+    { "name": "Auth", "description": "Authentication related endpoints" },
+    { "name": "Expenses", "description": "Expense management endpoints" },
+    { "name": "Budgets", "description": "Budget management endpoints" },
+    { "name": "Reports", "description": "Report management endpoints" }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new user",
+        "description": "Creates a new user and logs them in",
+        "operationId": "registerUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "responses": {
+            "201": { "description": "User registered successfully" },
+            "400": { "description": "Invalid input" },
+            "409": { "description": "User already exists" },
+            "429": { "description": "Too many requests" },
+            "500": { "description": "Internal Server error" }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login a user",
+        "description": "Logs in a user and returns a JWT token",
+        "operationId": "loginUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "format": "password" }
+                },
+                "required": ["email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "User logged in successfully" },
+          "400": { "description": "Invalid input" },
+          "401": { "description": "Invalid credentials" },
+          "429": { "description": "Too many requests" },
+          "500": { "description": "Internal Server error" }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Logout a user",
+        "description": "Logs out the currently logged-in user",
+        "operationId": "logoutUser",
+        "responses": {
+          "200": { "description": "User logged out successfully" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server error" }
+        }
+      }
+    },
+    "/api/auth/google": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Google OAuth2 Login",
+        "description": "Logs in a user using Google OAuth2",
+        "operationId": "googleLogin",
+        "responses": {
+          "302": { "description": "Redirect to Google OAuth2" },
+          "500": { "description": "Internal Server error" }
+        }
+      }
+    },
+    "/api/auth/google/callback": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Google OAuth2 Callback",
+        "description": "Handles the callback from Google OAuth2",
+        "operationId": "googleCallback",
+        "responses": {
+          "302": { "description": "Redirect to frontend application" },
+          "500": { "description": "Internal Server error" }
+        }
+      }
+    },
+    "/api/expenses": {
+      "get": {
+        "tags": ["Expenses"],
+        "summary": "Get all expenses for the logged-in user",
+        "description": "Returns a list of all expenses for the logged-in user",
+        "operationId": "getExpenses",
+        "responses": {
+          "200": { "description": "List of expenses retrieved successfully" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server error" }
+        }
+      },
+      "post": {
+        "tags": ["Expenses"],
+        "summary": "Create a new expense",
+        "description": "Creates a new expense for the logged-in user",
+        "operationId": "createExpense",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Expense"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Expense created successfully" },
+          "400": { "description": "Invalid input" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server error" }
+        }
+      }
+    },
+    "/api/expenses/{id}": {
+      "get": {
+        "tags": ["Expenses"],
+        "summary": "Get a specific expense by ID",
+        "description": "Returns a specific expense by ID for the logged-in user",
+        "operationId": "getExpenseById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "ID of the expense to retrieve"
+          }
+        ],
+        "responses": {
+          "200": { "description": "Expense retrieved successfully" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Expense not found" },
+          "500": { "description": "Internal Server error" }
+        }
+      },
+      "put": {
+        "tags": ["Expenses"],
+        "summary": "Update a specific expense by ID",
+        "description": "Updates a specific expense by ID for the logged-in user",
+        "operationId": "updateExpenseById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "ID of the expense to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Expense"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Expense updated successfully" },
+          "400": { "description": "Invalid input" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Expense not found" },
+          "500": { "description": "Internal Server error" }
+        }
+      },
+      "delete": {
+        "tags": ["Expenses"],
+        "summary": "Delete a specific expense by ID",
+        "description": "Deletes a specific expense by ID for the logged-in user",
+        "operationId": "deleteExpenseById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "ID of the expense to delete"
+          }
+        ],
+        "responses": {
+          "204": { "description": "Expense deleted successfully" },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Expense not found" },
+          "500": { "description": "Internal Server error" }
+        }
+      }
+    },
+    "/api/budgets": {
+      "get": {
+        "tags": ["Budgets"],
+        "summary": "Get all budgets for the logged-in user",
+        "description": "Returns a list of all budgets for the logged-in user",
+        "operationId": "getBudgets",
+        "responses": {
+          "200": { "description": "List of budgets retrieved successfully" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server error" }
+        }
+      },
+      "post": {
+        "tags": ["Budgets"],
+        "summary": "Create a new budget",
+        "description": "Creates a new budget for the logged-in user",
+        "operationId": "createBudget",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Budget"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Budget created successfully" },
+          "400": { "description": "Invalid input" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server error" }
+        }
+      }
+    },
+    "/api/goals": {
+      "get": {
+        "tags": ["Goals"],
+        "summary": "Get all goals for the logged-in user",
+        "description": "Returns a list of all goals for the logged-in user",
+        "operationId": "getGoals",
+        "responses": {
+          "200": { "description": "List of goals retrieved successfully" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server error" }
+        }
+      },
+      "post": {
+        "tags": ["Goals"],
+        "summary": "Create a new goal",
+        "description": "Creates a new goal for the logged-in user",
+        "operationId": "createGoal",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Goal"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Goal created successfully" },
+          "400": { "description": "Invalid input" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server error" }
+        }
+      }
+    },
+    "/api/reports": {
+      "get": {
+        "tags": ["Reports"],
+        "summary": "Get reports for the logged-in user",
+        "description": "Returns a list of reports for the logged-in user",
+        "operationId": "getReports",
+        "responses": {
+          "200": { "description": "List of reports retrieved successfully" },
+          "401": { "description": "Unauthorized" },
+          "500": { "description": "Internal Server error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "64a7f0c2e4b0c8b1a1e4d2f3" },
+          "name": { "type": "string", "example": "John Doe" },
+          "email": { "type": "string", "example": "o9d0u@example.com" },
+          "password": { "type": "string", "example": "password123" },
+          "income": { "type": "number", "example": 1000 },
+          "oauth": {
+            "type": "string",
+            "example": "google",
+            "enum": ["google", "null"]
+          },
+          "oauthId": { "type": "string", "example": "1234567890" },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Expense": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "64a7f0c2e4b0c8b1a1e4d2f3"
+          },
+          "userId": { "type": "string", "example": "64a7f0c2e4b0c8b1a1e4d2f3" },
+          "amount": { "type": "number", "example": 50.75 },
+          "category": { "type": "string", "example": "Food" },
+          "description": { "type": "string", "example": "Grocery shopping" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Budget": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "64a7f0c2e4b0c8b1a1e4d2f3" },
+          "userId": { "type": "string", "example": "64a7f0c2e4b0c8b1a1e4d2f3" },
+          "type": {
+            "type": "string",
+            "example": "Monthly",
+            "enum": ["monthly", "weekly"]
+          },
+          "amount": { "type": "number", "example": 500 },
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" },
+          "spent": { "type": "number", "example": 150 },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Goal": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "64a7f0c2e4b0c8b1a1e4d2f3" },
+          "userId": { "type": "string", "example": "64a7f0c2e4b0c8b1a1e4d2f3" },
+          "title": { "type": "string", "example": "New Laptop" },
+          "targetAmount": { "type": "number", "example": 1500 },
+          "currentAmount": { "type": "number", "example": 300 },
+          "deadline": { "type": "string", "format": "date-time" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "achieved", "failed"]
+          },
+          "createdAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "example": "64a7f0c2e4b0c8b1a1e4d2f3" },
+          "userId": { "type": "string", "example": "64a7f0c2e4b0c8b1a1e4d2f3" },
+          "type": {
+            "type": "string",
+            "example": "overspending",
+            "enum": ["overspending", "reminder", "report"]
+          },
+          "message": {
+            "type": "string",
+            "example": "You have exceeded your budget!"
+          },
+          "sentAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}
