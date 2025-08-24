@@ -13,7 +13,7 @@ import swaggerSetup from "./config/swagger.config.js";
 import schedulerSetup from "./config/scheduler.config.js";
 import { logger } from "./config/logger.config.js";
 
-const app = express();
+export const app = express();
 
 // Core configurations
 databaseSetup();
