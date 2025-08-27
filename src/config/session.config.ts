@@ -1,5 +1,6 @@
 //Configuration for Sessions and Session Stores
 
+import { Request, Response, NextFunction } from "express";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import { Application } from "express";
@@ -47,4 +48,13 @@ export default function sessionSetup(app: Application) {
         }
         next(err);
     });
+}
+
+
+export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
+    if (req.session.userId) {
+        return next();
+    } else {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
 }

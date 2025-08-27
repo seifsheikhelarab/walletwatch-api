@@ -10,7 +10,6 @@ declare module "express-session" {
   }
 }
 
-
 export const registerController = async (req: Request, res: Response) => {
   try {
     let { name, email, password, income } = req.body;
@@ -18,7 +17,7 @@ export const registerController = async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
-    } 
+    }
     let existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({ message: "Email already in use" });
@@ -65,11 +64,11 @@ export const loginController = async (req: Request, res: Response) => {
 }
 
 export const logoutController = (req: Request, res: Response) => {
-  try { 
+  try {
     req.session.destroy(err => logger.error(err));
     res.clearCookie('connect.sid');
     res.status(200).json({ message: "Logout successful" });
-  }catch(error: any){
+  } catch (error: any) {
     logger.error(`Error logging out user: ${error.message}`);
     res.status(500).json({ message: "Internal server error" });
   }

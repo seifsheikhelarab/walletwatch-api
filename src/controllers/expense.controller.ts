@@ -41,11 +41,11 @@ export const addExpense = async (req: Request, res: Response) => {
   }
 }
 
-export const getExpenseById = async (req: Request, res: Response) => {
+export const getOneExpense = async (req: Request, res: Response) => {
 
   try {
     let userId = req.session.userId;
-    let { id } = req.body;
+    let id = req.params.id;
 
     let expense = await Expense.find({
       _id: id,
@@ -65,10 +65,11 @@ export const getExpenseById = async (req: Request, res: Response) => {
 
 }
 
-export const updateExpense = async (req: Request, res: Response) => {
+export const updateOneExpense = async (req: Request, res: Response) => {
 
   try {
-    let { id, amount, category, description } = req.body;
+    let id = req.params.id;
+    let { amount, category, description } = req.body;
     let userId = req.session.userId;
 
     let expense = await Expense.findOneAndUpdate(
@@ -86,13 +87,13 @@ export const updateExpense = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteExpense = async (req: Request, res: Response) => {
+export const deleteOneExpense = async (req: Request, res: Response) => {
 
   try {
     let userId = req.session.userId;
-    let { ExpenseId } = req.body;
+    let id = req.params.id;
 
-    let expense = await Expense.findOneAndDelete({ _id: ExpenseId, userId: userId });
+    let expense = await Expense.findOneAndDelete({ _id: id, userId: userId });
 
     if (expense) {
       res.status(200).json({ message: "Expense deleted successfully" });

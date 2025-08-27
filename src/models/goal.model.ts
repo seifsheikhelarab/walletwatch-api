@@ -5,12 +5,9 @@ export interface IGoal extends Document {
   userId: Types.ObjectId;
   title: string;
   targetAmount: number;
-  currentAmount: number;
   deadline: Date;
   status: 'active' | 'achieved' | 'failed';
   createdAt: Date;
-  calculateProgress(): number;
-  isAchieved(): boolean;
   isExpired(): boolean;
 }
 
@@ -31,10 +28,6 @@ const goalSchema = new Schema<IGoal, IGoalModel>({
     required: [true, "Target Amount is required"],
     min: [0, "Target Amount can't be negative"]
   },
-  currentAmount: {
-    type: Number,
-    min: [0, "Current Amount can't be negative"],
-  },
   deadline: {
     type: Date,
     required: [true, "Deadline is required"]
@@ -43,16 +36,12 @@ const goalSchema = new Schema<IGoal, IGoalModel>({
     type: String,
     enum: ['active', 'achieved', 'failed'],
     default: 'active'
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 });
-
-goalSchema.methods.calculateProgress = function (): number {
-  return (this.currentAmount / this.targetAmount) * 100;
-};
-
-goalSchema.methods.isAchieved = function (): boolean {
-  return this.currentAmount >= this.targetAmount;
-};
 
 goalSchema.methods.isExpired = function (): boolean {
   return new Date() > this.deadline;

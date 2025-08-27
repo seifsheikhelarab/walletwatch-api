@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { logger } from "../config/logger.config.js";
 import Budget from "../models/budget.model.js";
-import Goal from "../models/goal.model.js";
 
 export const getBudgets = async (req: Request, res: Response) => {
   try {
@@ -23,11 +22,10 @@ export const getBudgets = async (req: Request, res: Response) => {
 export const setBudget = async (req: Request, res: Response) => {
 
   try {
-    let { type, amount, startDate, endDate } = req.body;
+    let { amount, startDate, endDate } = req.body;
     let userId = req.session.userId;
     let budget = new Budget({
       userId,
-      type,
       amount,
       startDate,
       endDate
@@ -43,40 +41,61 @@ export const setBudget = async (req: Request, res: Response) => {
   }
 }
 
-export const getGoals = async (req: Request, res: Response) => {
+export async function getOneBudget(req: Request, res: Response) {
   try {
+    let id = req.params.id;
     let userId = req.session.userId;
-    let goals = await Goal.find({ userId });
 
-    if (goals) {
-      res.status(200).json({ goals });
+    let budget = await Budget.findOne({ _id: id, userId });
+
+    if (budget) {
+      res.status(200).json({ budget });
     } else {
-      res.status(404).json({ message: "No goals found" });
+      res.status(404).json({ message: "Budget not found" });
     }
 
   } catch (error: any) {
-    logger.error(`Error fetching goals: ${error.message}`);
-    res.status(500).json({ message: "Internal server error" });
+    logger.error(`Error fetching budget: ${error.message}`);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
-export const setGoal = async (req: Request, res: Response) => {
+export async function updateOneBudget(req: Request, res: Response) {
   try {
-    let { title, targetAmount, currentAmount, deadline } = req.body;
+    let id = req.params.id;
+    let { amount, startDate, endDate } = req.body;
     let userId = req.session.userId;
-    let goal = new Goal({
-      userId,
-      title,
-      targetAmount,
-      currentAmount,
-      deadline
-    });
 
-    await goal.save();
+    let budget = await Budget.findOneAndUpdate(
+      { _id: id, userId },
+      { amount, startDate, endDate },
+      { new: true }
+    );
 
-    res.status(201).json({ message: "Goal set successfully" });
+    if (budget) {
+      res.status(200).json({ message: "Budget updated successfully", budget });
+    } else {
+      res.status(404).json({ message: "Budget not found" });
+    };
   } catch (error: any) {
-    logger.error(`Error setting goal: ${error.message}`);
+    logger.error(`Error updating budget: ${error.message}`);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function deleteOneBudget(req: Request, res: Response) {
+  try {
+    let id = req.params.id;
+    let userId = req.session.userId;
+    let budget = await Budget.findOneAndDelete({ _id: id, userId });
+
+    if (budget) {
+      res.status(200).json({ message: "Budget deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Budget not found" });
+    }
+  } catch (error: any) {
+    logger.error(`Error deleting budget: ${error.message}`);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }

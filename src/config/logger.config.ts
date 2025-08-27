@@ -1,12 +1,30 @@
-//Configuration for Pino-Pretty Logger
+// //Configuration for Pino-Pretty Logger
+import { Application } from "express";
+import fs from "fs";
+import morgan from "morgan";
+import { pino, multistream } from "pino";
+import pretty from "pino-pretty";
 
-import { pino } from "pino";
-export const logger = pino({
-    transport: {
-        target: 'pino-pretty',
-        options: {
-            colorize: true,
-            hideObjects: false
-        }
-    }
-})
+// Pretty stream for console
+const prettyStream = pretty({
+    colorize: true,
+    translateTime: "yyyy-mm-dd HH:MM:ss",
+    ignore: "pid,hostname",
+});
+
+const streams = [
+    { stream: fs.createWriteStream("./logs/app.log", { flags: "a" }) },
+    { stream: prettyStream },
+];
+
+export const logger = pino(
+    { level: "info" },
+    multistream(streams)
+);
+
+export function loggerSetup(app: Application) {
+    app.use(morgan("dev"));
+    app.use(morgan("combined", {
+        stream: fs.createWriteStream("./logs/access.log", { flags: "a" })
+    }));
+}

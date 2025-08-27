@@ -4,13 +4,11 @@
 
 import { Application } from "express";
 import express from "express";
-import morgan from "morgan";
 import methodOverride from "method-override";
 import cors from "cors";
 
 export default function middlewareSetup(app: Application) {
 
-    app.use(morgan("dev"));
     app.use(cors());
     app.use(express.urlencoded({ extended: false }));
     app.use(express.json());

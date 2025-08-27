@@ -14,11 +14,11 @@ WalletWatch API is a backend service for managing personal finance, including bu
 
 ## Folder Structure
 
-```
+```bash
 src/
   app.ts                  # Main application entry point
   routes.ts               # API route definitions
-  delcarations.d.ts       # TypeScript declarations
+  declarations.d.ts       # TypeScript declarations
   config/                 # Configuration files
     database.config.ts    # Database setup
     logger.config.ts      # Logger setup
@@ -61,7 +61,7 @@ npm install
 
 ### Configuration
 
-Edit enviroment variables in `.env` to set up services as needed.
+Edit environment variables in `.env` to set up services as needed.
 
 ### Running the API
 
@@ -86,6 +86,15 @@ Swagger documentation is available at `/docs` when the server is running. See `s
 - Set financial goals
 - Receive notifications
 - Generate financial reports
+
+## To-do List
+
+- Add more endpoints and controller functionality
+- Code Cleanup
+- Testing using Jest + Supertest
+- More methods attached to Models
+- JWT auth
+- Option to use SQL database
 
 ## Contributing
 

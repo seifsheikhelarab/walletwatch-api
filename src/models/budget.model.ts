@@ -3,11 +3,9 @@ import mongoose, { Document, Model, Schema, Types } from 'mongoose';
 export interface IBudget extends Document {
   _id: Types.ObjectId;
   userId: Types.ObjectId;
-  type: 'monthly' | 'weekly';
   amount: number;
   startDate: Date;
   endDate: Date;
-  spent: number;
   createdAt: Date;
   calculateSpent(startDate?: Date, endDate?: Date): Promise<number>;
   isOverspent(startDate?: Date, endDate?: Date): Promise<boolean>;
@@ -23,11 +21,6 @@ const budgetSchema = new Schema<IBudget, IBudgetModel>({
     ref: 'User',
     required: [true, "User ID is required"]
   },
-  type: {
-    type: String,
-    enum: ['monthly', 'weekly'],
-    required: [true, "Budget type is required"]
-  },
   amount: {
     type: Number,
     required: [true, "Budget amount is required"],
@@ -40,10 +33,6 @@ const budgetSchema = new Schema<IBudget, IBudgetModel>({
   endDate: {
     type: Date,
     required: [true, "End date is required"]
-  },
-  spent: {
-    type: Number,
-    default: 0
   },
   createdAt: {
     type: Date,
