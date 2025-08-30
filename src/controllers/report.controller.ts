@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { logger } from "../config/logger.config.js";
-import { Notification } from "../models/notification.model.js";
+import { logger } from "../config/logger.config.ts";
+import { Notification } from "../models/notification.model.ts";
 
 export const getReports = async (req: Request, res: Response) => {
   try {

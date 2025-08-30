@@ -6,7 +6,7 @@ import {
   loginController,
   logoutController,
   googleCallbackController
-} from "./controllers/auth.controller.js";
+} from "./controllers/auth.controller.ts";
 
 import {
   getExpenses,
@@ -14,7 +14,7 @@ import {
   getOneExpense,
   updateOneExpense,
   deleteOneExpense
-} from "./controllers/expense.controller.js";
+} from "./controllers/expense.controller.ts";
 
 import {
   getBudgets,
@@ -22,7 +22,7 @@ import {
   getOneBudget,
   updateOneBudget,
   deleteOneBudget
-} from "./controllers/budget.controller.js";
+} from "./controllers/budget.controller.ts";
 
 import {
   getGoals,
@@ -30,15 +30,15 @@ import {
   getOneGoal,
   updateOneGoal,
   deleteOneGoal
-} from "./controllers/goal.controller.js";
+} from "./controllers/goal.controller.ts";
 
 import {
   getReports,
   getNotifications
-} from "./controllers/report.controller.js";
+} from "./controllers/report.controller.ts";
 
-import { errorArray } from "./config/validation.config.js";
-import { isAuthenticated } from "./config/session.config.js";
+import { errorArray } from "./config/validation.config.ts";
+import { isAuthenticated } from "./config/session.config.ts";
 
 export const router = express.Router();
 

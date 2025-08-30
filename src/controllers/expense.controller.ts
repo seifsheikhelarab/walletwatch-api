@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { logger } from "../config/logger.config.js";
-import User from "../models/user.model.js";
-import Expense from "../models/expense.model.js";
+import { logger } from "../config/logger.config.ts";
+import User from "../models/user.model.ts";
+import Expense from "../models/expense.model.ts";
 
 export const getExpenses = async (req: Request, res: Response) => {
 
@@ -10,7 +10,7 @@ export const getExpenses = async (req: Request, res: Response) => {
 
     let user = await User.findById(userId);
 
-    let expenses = Expense.find({ userId: user!._id });
+    let expenses = await Expense.find({ userId: user!._id });
 
     res.status(200).json({ expenses });
 

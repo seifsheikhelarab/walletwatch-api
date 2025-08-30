@@ -25,7 +25,7 @@
     { "name": "Reports", "description": "Report management endpoints" }
   ],
   "paths": {
-    "/api/auth/register": {
+    "/auth/register": {
       "post": {
         "tags": ["Auth"],
         "summary": "Register a new user",
@@ -50,7 +50,7 @@
         }
       }
     },
-    "/api/auth/login": {
+    "/auth/login": {
       "post": {
         "tags": ["Auth"],
         "summary": "Login a user",
@@ -80,7 +80,7 @@
         }
       }
     },
-    "/api/auth/logout": {
+    "/auth/logout": {
       "post": {
         "tags": ["Auth"],
         "summary": "Logout a user",
@@ -93,7 +93,7 @@
         }
       }
     },
-    "/api/auth/google": {
+    "/auth/google": {
       "get": {
         "tags": ["Auth"],
         "summary": "Google OAuth2 Login",
@@ -105,7 +105,7 @@
         }
       }
     },
-    "/api/auth/google/callback": {
+    "/auth/google/callback": {
       "get": {
         "tags": ["Auth"],
         "summary": "Google OAuth2 Callback",
@@ -117,7 +117,7 @@
         }
       }
     },
-    "/api/expenses": {
+    "/expenses": {
       "get": {
         "tags": ["Expenses"],
         "summary": "Get all expenses for the logged-in user",
@@ -152,7 +152,7 @@
         }
       }
     },
-    "/api/expenses/{id}": {
+    "/expenses/{id}": {
       "get": {
         "tags": ["Expenses"],
         "summary": "Get a specific expense by ID",
@@ -228,7 +228,7 @@
         }
       }
     },
-    "/api/budgets": {
+    "/budgets": {
       "get": {
         "tags": ["Budgets"],
         "summary": "Get all budgets for the logged-in user",
@@ -263,7 +263,7 @@
         }
       }
     },
-    "/api/goals": {
+    "/goals": {
       "get": {
         "tags": ["Goals"],
         "summary": "Get all goals for the logged-in user",
@@ -298,7 +298,7 @@
         }
       }
     },
-    "/api/reports": {
+    "/reports": {
       "get": {
         "tags": ["Reports"],
         "summary": "Get reports for the logged-in user",

@@ -1,6 +1,6 @@
 import mongoose, { Document, Model, Schema, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
-import { IExpense } from './expense.model.js';
+import { IExpense } from './expense.model.ts';
 
 export interface IUser extends Document {
   _id: Types.ObjectId;

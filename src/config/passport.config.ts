@@ -2,8 +2,8 @@
 
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { User } from '../models/user.model.js';
-import { logger } from './logger.config.js';
+import { User } from '../models/user.model.ts';
+import { logger } from './logger.config.ts';
 import { Application } from 'express';
 
 export default function passportSetup(app: Application) {

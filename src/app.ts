@@ -1,21 +1,19 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import express from "express";
+import databaseSetup from "./config/database.config.ts";
+import middlewareSetup from "./config/middleware.config.ts";
+import sessionSetup from "./config/session.config.ts";
+import passportSetup from "./config/passport.config.ts";
+import swaggerSetup from "./config/swagger.config.ts";
+import schedulerSetup from "./config/scheduler.config.ts";
+import { logger, loggerSetup } from "./config/logger.config.ts";
+import serverSetup from "./config/server.config.ts";
+import { router } from "./routes.ts";
 
-import { router } from "./routes.js";
-
-import databaseSetup from "./config/database.config.js";
-import middlewareSetup from "./config/middleware.config.js";
-import sessionSetup from "./config/session.config.js";
-import passportSetup from "./config/passport.config.js";
-import swaggerSetup from "./config/swagger.config.js";
-import schedulerSetup from "./config/scheduler.config.js";
-import { logger, loggerSetup } from "./config/logger.config.js";
-
-export const app = express();
 
 // Core configurations
+const app = serverSetup();
 databaseSetup();
 sessionSetup(app);
 passportSetup(app);
@@ -24,11 +22,9 @@ swaggerSetup(app);
 schedulerSetup();
 loggerSetup(app);
 
-// Routes
 app.use("/", router);
 
 // Start server
 const port = process.env.PORT || 3000;
 app.listen(port, () => logger.info(`App Started on http://localhost:${port}`));
 
-export default app;

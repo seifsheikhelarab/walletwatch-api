@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { logger } from "../config/logger.config.js";
-import Goal from "../models/goal.model.js";
+import { logger } from "../config/logger.config.ts";
+import Goal from "../models/goal.model.ts";
 
 export const getGoals = async (req: Request, res: Response) => {
   try {

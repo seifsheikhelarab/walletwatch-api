@@ -89,6 +89,7 @@ Swagger documentation is available at `/docs` when the server is running. See `s
 
 ## To-do List
 
+- Swagger Docs cleanup and Postman Collection
 - Add more endpoints and controller functionality
 - Code Cleanup
 - Testing using Jest + Supertest

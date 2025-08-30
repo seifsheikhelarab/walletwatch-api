@@ -4,7 +4,15 @@ import { Request, Response, NextFunction } from "express";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import { Application } from "express";
-import { logger } from "./logger.config.js";
+import { logger } from "./logger.config.ts";
+
+declare module "express-session" {
+    interface SessionData {
+        userId: string;
+        isAuthenticated?: boolean;
+    }
+}
+
 
 export default function sessionSetup(app: Application) {
     const store = MongoStore.create({
@@ -42,9 +50,7 @@ export default function sessionSetup(app: Application) {
     app.use((err: any, req: any, res: any, next: any) => {
         if (err.code === 'ECONNREFUSED') {
             logger.error('Session store connection failed');
-            return res.status(500).render('public/error', {
-                message: 'Session service unavailable'
-            });
+            return res.status(500).json({ msg: 'Session service unavailable' });
         }
         next(err);
     });

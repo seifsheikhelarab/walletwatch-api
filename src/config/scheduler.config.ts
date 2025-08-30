@@ -1,9 +1,9 @@
 import cron from 'node-cron';
-import { emailTemplates, sendEmail } from './mail.config.js';
-import User from '../models/user.model.js';
-import { logger } from './logger.config.js';
-import { Notification } from '../models/notification.model.js';
-import Budget from '../models/budget.model.js';
+import { emailTemplates, sendEmail } from './mail.config.ts';
+import User from '../models/user.model.ts';
+import { logger } from './logger.config.ts';
+import { Notification } from '../models/notification.model.ts';
+import Budget from '../models/budget.model.ts';
 
 function sendReportEmailMonthly() {
   // Every month on the 1st at 10 AM

@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import mongoose from "mongoose";
-import { logger } from "./logger.config.js";
+import { logger } from "./logger.config.ts";
 
 export default function databaseSetup() {
 

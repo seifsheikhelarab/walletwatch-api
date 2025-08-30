@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { logger } from "../config/logger.config.js";
-import Budget from "../models/budget.model.js";
+import { logger } from "../config/logger.config.ts";
+import Budget from "../models/budget.model.ts";
 
 export const getBudgets = async (req: Request, res: Response) => {
   try {
@@ -9,6 +9,7 @@ export const getBudgets = async (req: Request, res: Response) => {
 
     if (budgets) {
       res.status(200).json({ budgets });
+      logger.info(`Fetched budgets for user: ${userId}`);
     } else {
       res.status(404).json({ message: "No budgets found" });
     }
@@ -34,6 +35,7 @@ export const setBudget = async (req: Request, res: Response) => {
     await budget.save();
 
     res.status(201).json({ message: "Budget set successfully" });
+    logger.info(`Budget set for user: ${userId}`);
 
   } catch (error: any) {
     logger.error(`Error setting budget: ${error.message}`);
@@ -50,6 +52,7 @@ export async function getOneBudget(req: Request, res: Response) {
 
     if (budget) {
       res.status(200).json({ budget });
+      logger.info(`Fetched budget for user: ${userId}`);
     } else {
       res.status(404).json({ message: "Budget not found" });
     }

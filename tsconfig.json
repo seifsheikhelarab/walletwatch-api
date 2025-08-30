@@ -9,6 +9,8 @@
     "skipLibCheck": true,
     "rootDir": "./src",
     "outDir": "./dist",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
   },
   "include": ["src", "public"],
   "ts-node": {
