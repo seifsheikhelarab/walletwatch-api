@@ -1,5 +1,4 @@
 //Configuration for Swagger to generate API documentation
-//Needs Update
 import dotenv from "dotenv";
 dotenv.config();
 

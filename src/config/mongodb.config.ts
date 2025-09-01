@@ -1,4 +1,5 @@
 //Configuration for connecting to MongoDB database
+// To-Do: add SQL compatibility
 
 import dotenv from "dotenv";
 dotenv.config();

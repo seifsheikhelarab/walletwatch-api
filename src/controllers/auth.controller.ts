@@ -12,71 +12,82 @@ declare module "express-session" {
 
 export const registerController = async (req: Request, res: Response) => {
   try {
-    if (req.session.userId) {
-      return res.status(400).json({ message: "User already logged in" });
-    }
 
     let { name, email, password, income } = req.body;
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      res.status(400).json({ statusCode: 400, errors: errors.array() });
     }
+
     let existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ message: "Email already in use" });
+      res.status(409).json({ statusCode: 409, message: "Email already in use" });
     }
+
     let user = await User.create({ name, email, password, income });
+
     req.session.userId = user._id.toString();
-    res.status(201).json({ message: "User registered successfully", user });
+
+    let returnUser = {
+      name: user.name,
+      email: user.email,
+      income: user.income,
+      oauth: user.oauth,
+    };
+
     logger.info(`User registered: ${user.email}`);
+    res.status(201).json({ statusCode: 201, message: "User registered successfully", user: returnUser });
+
+
   } catch (error: any) {
     logger.error(`Error registering user: ${error.message}`);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ statusCode: 500, message: "Internal server error", error: error.message });
   }
 }
 
 export const loginController = async (req: Request, res: Response) => {
   try {
-    if (req.session.userId) {
-      return res.status(400).json({ message: "User already logged in" });
-    }
 
     let { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+      res.status(400).json({ statusCode: 400, message: "Email and password are required" });
     }
 
     let user = await User.findOne({ email }).select('+password');
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      res.status(404).json({ statusCode: 404, message: "User not found" });
+    } else if (!(await user.checkPassword(password))) {
+      res.status(401).json({ statusCode: 401, message: "Invalid credentials" });
+    } else {
+      req.session.userId = user._id.toString();
+
+      logger.info(`User logged in: ${user.email}`);
+
+      let returnUser = {
+        name: user.name,
+        email: user.email,
+        income: user.income,
+        oauth: user.oauth,
+      };
+
+      res.status(200).json({ statusCode: 200, message: "Login successful", user: returnUser });
     }
-    const isMatch = await user.checkPassword(password);
-
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    req.session.userId = user._id.toString();
-    res.status(200).json({ message: "Login successful", user });
-
-    logger.info(`User logged in: ${user.email}`);
-
-
   } catch (error: any) {
     logger.error(`Error logging in user: ${error.message}`);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ statusCode: 500, message: "Internal server error" });
   }
 }
 
 export const logoutController = (req: Request, res: Response) => {
   try {
+
     req.session.destroy(err => { if (err) logger.error(err) });
     res.clearCookie('connect.sid');
     res.status(200).json({ message: "Logout successful" });
     logger.info(`User logged out: ${req.session.userId}`);
+
   } catch (error: any) {
     logger.error(`Error logging out user: ${error.message}`);
     res.status(500).json({ message: "Internal server error" });

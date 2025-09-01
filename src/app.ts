@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import databaseSetup from "./config/database.config.ts";
+import databaseSetup from "./config/mongodb.config.ts";
 import middlewareSetup from "./config/middleware.config.ts";
 import sessionSetup from "./config/session.config.ts";
 import passportSetup from "./config/passport.config.ts";
@@ -15,7 +15,6 @@ import { router } from "./routes.ts";
 // Core configurations
 const app = serverSetup();
 databaseSetup();
-sessionSetup(app);
 passportSetup(app);
 middlewareSetup(app);
 swaggerSetup(app);

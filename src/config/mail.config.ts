@@ -1,4 +1,5 @@
-//Configuration for sending emails using Nodemailer
+// Configuration for sending emails using Nodemailer
+// Still needs to be updated
 
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';

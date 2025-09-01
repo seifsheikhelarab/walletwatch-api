@@ -37,16 +37,16 @@ import {
   getNotifications
 } from "./controllers/report.controller.ts";
 
-import { errorArray } from "./config/validation.config.ts";
-import { isAuthenticated } from "./config/session.config.ts";
+import { errorArray } from "./middleware/validation.middleware.ts";
+import { isAuthenticated, isNotAuthenticated } from "./middleware/auth.middleware.ts";
 
 export const router = express.Router();
 
 //Auth routes
-router.post("/auth/register", errorArray, registerController);
-router.post("/auth/login", errorArray, loginController);
+router.post("/auth/register",isNotAuthenticated, errorArray, registerController);
+router.post("/auth/login",isNotAuthenticated, errorArray, loginController);
 router.post("/auth/logout", isAuthenticated, logoutController);
-router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/auth/google',isNotAuthenticated, passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/auth/login' }), googleCallbackController);
 
 // Expenses
@@ -80,6 +80,6 @@ router.route("/goals/:id")
   .put(isAuthenticated, updateOneGoal)
   .delete(isAuthenticated, deleteOneGoal);
 
-//Reports and Notification s
+//Reports and Notifications
 router.get("/reports", isAuthenticated, getReports);
 router.get("/notifications", isAuthenticated, getNotifications);

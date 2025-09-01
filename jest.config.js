@@ -10,7 +10,9 @@ export default {
     ...tsJestTransformCfg,
   },
   testMatch: ["**/**/*.test.ts"],
-  verbose: true,
   forceExit: true,
   // clearMocks: true
+  moduleNameMapper: {
+    "^bcrypt$": "<rootDir>/src/test/mocks/bcrypt.ts",
+  },
 };

@@ -1,6 +1,9 @@
 import mongoose, { Document, Model, Schema, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 import { IExpense } from './expense.model.ts';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
@@ -63,8 +66,7 @@ userSchema.index({ email: 1 }, { unique: true });
 userSchema.pre<IUser>('save', async function (next) {
   if (this.password === undefined) return next();
   if (this.isModified('password') || this.isNew) {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.password = await bcrypt.hash(this.password, process.env.NODE_ENV === 'test' ? 1 : 10);
   }
   next();
 });

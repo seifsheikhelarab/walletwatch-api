@@ -21,7 +21,7 @@ export const getGoals = async (req: Request, res: Response) => {
 
 export const setGoal = async (req: Request, res: Response) => {
   try {
-    let { title, targetAmount, currentAmount, deadline } = req.body;
+    let { title, targetAmount, deadline } = req.body;
     let userId = req.session.userId;
     let goal = new Goal({
       userId,

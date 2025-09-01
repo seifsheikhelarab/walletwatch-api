@@ -1,8 +1,9 @@
 import express from "express";
-import { router } from "../routes.ts";
+import sessionSetup from "./session.config.ts";
 
 export default function serverSetup() {
   const app = express();
   app.use(express.json())
+  sessionSetup(app);
   return app;
 };
