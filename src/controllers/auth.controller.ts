@@ -17,11 +17,13 @@ export const registerController = async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(400).json({ statusCode: 400, errors: errors.array() });
+      return;
     }
 
     let existingUser = await User.findOne({ email });
     if (existingUser) {
       res.status(409).json({ statusCode: 409, message: "Email already in use" });
+      return;
     }
 
     let user = await User.create({ name, email, password, income });
@@ -37,11 +39,13 @@ export const registerController = async (req: Request, res: Response) => {
 
     logger.info(`User registered: ${user.email}`);
     res.status(201).json({ statusCode: 201, message: "User registered successfully", user: returnUser });
+    return;
 
 
   } catch (error: any) {
     logger.error(`Error registering user: ${error.message}`);
     res.status(500).json({ statusCode: 500, message: "Internal server error", error: error.message });
+    return;
   }
 }
 
@@ -52,14 +56,17 @@ export const loginController = async (req: Request, res: Response) => {
 
     if (!email || !password) {
       res.status(400).json({ statusCode: 400, message: "Email and password are required" });
+      return;
     }
 
     let user = await User.findOne({ email }).select('+password');
 
     if (!user) {
       res.status(404).json({ statusCode: 404, message: "User not found" });
+      return;
     } else if (!(await user.checkPassword(password))) {
       res.status(401).json({ statusCode: 401, message: "Invalid credentials" });
+      return;
     } else {
       req.session.userId = user._id.toString();
 
@@ -73,26 +80,35 @@ export const loginController = async (req: Request, res: Response) => {
       };
 
       res.status(200).json({ statusCode: 200, message: "Login successful", user: returnUser });
+      return;
     }
   } catch (error: any) {
     logger.error(`Error logging in user: ${error.message}`);
     res.status(500).json({ statusCode: 500, message: "Internal server error" });
+    return;
   }
 }
 
 export const logoutController = (req: Request, res: Response) => {
   try {
+    const userId = req.session.userId; // store before destroying
 
-    req.session.destroy(err => { if (err) logger.error(err) });
-    res.clearCookie('connect.sid');
-    res.status(200).json({ message: "Logout successful" });
-    logger.info(`User logged out: ${req.session.userId}`);
+    req.session.destroy(err => {
+      if (err) {
+        logger.error(err);
+        return res.status(500).json({ message: "Failed to log out" });
+      }
+
+      res.clearCookie("connect.sid");
+      res.status(200).json({ message: "Logout successful" });
+      logger.info(`User logged out: ${userId}`);
+    });
 
   } catch (error: any) {
     logger.error(`Error logging out user: ${error.message}`);
-    res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error" });
   }
-}
+};
 
 export const googleCallbackController = async (req: Request, res: Response) => {
   try {

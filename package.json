@@ -18,7 +18,8 @@
   "type": "module",
   "main": "/dist/app.js",
   "scripts": {
-    "test": "jest",
+    "test-start": "jest",
+    "test-watch":"jest --watch",
     "build": "tsc",
     "watch": "tsx watch src/app.ts",
     "dev": "tsx src/app.ts",

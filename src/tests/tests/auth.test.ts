@@ -40,7 +40,6 @@ describe("POST /auth/register", () => {
         password: "Pass1234",
         income: 7000,
       });
-    console.log(res.status, res.body);
 
     expect(res.statusCode).toBe(201);
     expect(res.body.message).toBe("User registered successfully");

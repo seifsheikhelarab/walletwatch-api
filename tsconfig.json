@@ -11,9 +11,12 @@
     "outDir": "./dist",
     "allowImportingTsExtensions": true,
     "noEmit": true,
+    "types": ["jest","node"]
   },
-  "include": ["src", "public"],
+  "include": ["src", "public", "src/tests"],
   "ts-node": {
     "esm": true
-  }
+  },
+  "ignoreWatch": ["node_modules", "dist"],
+  "exclude": ["node_modules", "dist", "./src/tests"]
 }

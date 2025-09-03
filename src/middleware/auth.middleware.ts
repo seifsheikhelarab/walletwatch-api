@@ -3,13 +3,19 @@ import { Request, Response, NextFunction } from "express";
 
 export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
   if (req.session.userId) {
-    return next();
+    next();
+    return;
   } else {
-    return res.status(401).json({ message: "Unauthorized" });
+    res.status(401).json({ message: "Unauthorized" });
+    return;
   }
 }
 
 export function isNotAuthenticated(req: Request, res: Response, next: NextFunction) {
-  if (!req.session.userId) return next();
-  else return res.status(401).json({ message: "you are already logged in" });
+  if (!req.session.userId) {
+    next();
+    return;
+  }
+  res.status(401).json({ message: "you are already logged in" });
+  return;
 }

@@ -1,4 +1,4 @@
-# WalletWatch API
+# WalletWatch API - WIP
 
 WalletWatch API is a backend service for managing personal finance, including budgets, expenses, goals, notifications, and user authentication. Built with Node.js and TypeScript, it provides RESTful endpoints for integration with web and mobile clients.
 

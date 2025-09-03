@@ -13,6 +13,6 @@ export default {
   forceExit: true,
   // clearMocks: true
   moduleNameMapper: {
-    "^bcrypt$": "<rootDir>/src/test/mocks/bcrypt.ts",
+    "^bcrypt$": "<rootDir>/src/tests/mocks/bcrypt.mock.ts",
   },
 };
