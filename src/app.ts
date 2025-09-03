@@ -21,6 +21,7 @@ schedulerSetup();
 loggerSetup(app);
 
 app.use("/", router);
+app.use((req, res) => res.status(404).json({ error: "Not Found" }));
 
 // Start server
 const port = process.env.PORT || 4650;
