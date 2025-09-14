@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import { logger } from "../config/logger.config.ts";
-import { Notification } from "../models/notification.model.ts";
+import { logger } from "../config/logger.config.js";
+import { Notification } from "../models/notification.model.js";
 
 export const getReports = async (req: Request, res: Response) => {
   try {
-    let userId = req.session.userId;
+    const userId = req.session.userId;
 
-    let reports = await Notification.find({ userId, type: 'report' });
+    const reports = await Notification.find({ userId, type: 'report' });
 
     if (reports) {
       res.status(200).json({ reports });
@@ -14,17 +14,17 @@ export const getReports = async (req: Request, res: Response) => {
       res.status(404).json({ message: "No reports found" });
     }
 
-  } catch (error: any) {
-    logger.error(`Error fetching reports: ${error.message}`);
+  } catch (error: unknown) {
+    logger.error(`Error fetching reports: ${error}`);
     res.status(500).json({ message: "Internal server error" });
   }
 }
 
 export const getNotifications = async (req: Request, res: Response) => {
   try {
-    let userId = req.session.userId;
+    const userId = req.session.userId;
 
-    let notifications = await Notification.find({ userId });
+    const notifications = await Notification.find({ userId });
 
     if (notifications) {
       res.status(200).json({ notifications });
@@ -32,8 +32,8 @@ export const getNotifications = async (req: Request, res: Response) => {
       res.status(404).json({ message: "No notifications found" });
     }
 
-  } catch (error: any) {
-    logger.error(`Error fetching notifications: ${error.message}`);
+  } catch (error: unknown) {
+    logger.error(`Error fetching notifications: ${error}`);
     res.status(500).json({ message: "Internal server error" });
   }
 }

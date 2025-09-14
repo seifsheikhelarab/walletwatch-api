@@ -1,9 +1,9 @@
-import mongoose, { Document, Model, Schema, Types } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
-import { IExpense } from './expense.model.ts';
+import { IExpense } from './expense.model.js';
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 export interface IUser extends Document {
   _id: Types.ObjectId;
@@ -20,9 +20,7 @@ export interface IUser extends Document {
   getSavingGoalsStatus(): () => Promise<{ totalSavings: number; savingsStatus: string }>;
 }
 
-export interface IUserModel extends Model<IUser> { };
-
-const userSchema = new Schema<IUser, IUserModel>({
+const userSchema = new Schema<IUser>({
   name: {
     type: String,
     required: [true, "Name is required"],
@@ -79,18 +77,7 @@ userSchema.methods.checkPassword = async function (
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
-userSchema.methods.getExpenses = async function (
-  this: IUser,
-  startDate?: Date,
-  endDate?: Date
-): Promise<IExpense[]> {
-  const query: any = { userId: this._id };
-  if (startDate) query.CreatedAt = { $gte: startDate };
-  if (endDate) query.CreatedAt = { $lte: endDate };
 
-  return await mongoose.model<IExpense>('Expense').find(query).exec();
-}
-
-export const User = mongoose.model<IUser, IUserModel>('User', userSchema);
+export const User = mongoose.model<IUser>('User', userSchema);
 
 export default User;

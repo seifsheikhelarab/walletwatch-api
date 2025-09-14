@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema, Types } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export interface IBudget extends Document {
   _id: Types.ObjectId;
@@ -13,9 +13,7 @@ export interface IBudget extends Document {
   getUsagePercentage(): Promise<number>;
 }
 
-export interface IBudgetModel extends Model<IBudget> { };
-
-const budgetSchema = new Schema<IBudget, IBudgetModel>({
+const budgetSchema = new Schema<IBudget>({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -69,6 +67,6 @@ budgetSchema.methods.getUsagePercentage = async function (): Promise<number> {
   return (spent / this.amount) * 100;
 };
 
-export const Budget = mongoose.model<IBudget, IBudgetModel>('Budget', budgetSchema);
+export const Budget = mongoose.model<IBudget>('Budget', budgetSchema);
 
 export default Budget;

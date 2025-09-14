@@ -2,11 +2,11 @@
 
 import session from "express-session";
 import MongoStore from "connect-mongo";
-import { Application } from "express";
-import { logger } from "./logger.config.ts";
+import { Application, NextFunction, Request, Response } from "express";
+import { logger } from "./logger.config.js";
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 
 declare module "express-session" {
@@ -50,8 +50,8 @@ export default function sessionSetup(app: Application) {
     rolling: true
   }));
 
-  app.use((err: any, req: any, res: any, next: any) => {
-    if (err.code === 'ECONNREFUSED') {
+  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    if (err.message === 'ECONNREFUSED') {
       logger.error('Session store connection failed');
       return res.status(500).json({ msg: 'Session service unavailable' });
     }

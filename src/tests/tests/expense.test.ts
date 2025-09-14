@@ -28,7 +28,7 @@ beforeEach(async () => {
     await collections[key].deleteMany({});
   }
 
-  let befRes = await request(app)
+  const befRes = await request(app)
     .post("/auth/register")
     .send({
       name: "John Doe",
@@ -90,7 +90,7 @@ describe("GET /expenses", () => {
 
 describe("GET /expenses/:id", () => {
   it("should return a 404 if no expense is found", async () => {
-    let id = new mongoose.Types.ObjectId();
+    const id = new mongoose.Types.ObjectId();
     const res = await request(app)
       .get(`/expenses/${id}`)
       .set("Cookie", cookie);
@@ -135,7 +135,7 @@ describe("PUT /expenses/:id", () => {
   })
 
   it("should return a 404 if no expense is found", async () => {
-    let id = new mongoose.Types.ObjectId();
+    const id = new mongoose.Types.ObjectId();
     const res = await request(app)
       .put(`/expenses/${id}`)
       .set("Cookie", cookie)
@@ -181,7 +181,7 @@ describe("DELETE /expenses/:id", () => {
   })
 
   it("should return a 404 if no expense is found", async () => {
-    let id = new mongoose.Types.ObjectId();
+    const id = new mongoose.Types.ObjectId();
     const res = await request(app)
       .delete(`/expenses/${id}`)
       .set("Cookie", cookie);

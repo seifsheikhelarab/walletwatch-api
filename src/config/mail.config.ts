@@ -4,7 +4,7 @@
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 const mailConfig = {
     host: process.env.SMTP_HOST!,
@@ -54,16 +54,12 @@ export const emailTemplates = {
 };
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
-    try {
-        const transporter = nodemailer.createTransport(mailConfig);
-        const info = await transporter.sendMail({
-            from: `"WalletWatch" <${mailConfig.from}>`,
-            to,
-            subject,
-            html
-        });
-        return info;
-    } catch (error: any) {
-        throw error;
-    }
+    const transporter = nodemailer.createTransport(mailConfig);
+    const info = await transporter.sendMail({
+        from: `"WalletWatch" <${mailConfig.from}>`,
+        to,
+        subject,
+        html
+    });
+    return info;
 };

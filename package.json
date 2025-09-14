@@ -19,11 +19,13 @@
   "main": "/dist/app.js",
   "scripts": {
     "test-start": "jest",
-    "test-watch":"jest --watch",
-    "build": "tsc",
-    "watch": "tsx watch src/app.ts",
-    "dev": "tsx src/app.ts",
-    "start": "node dist/app.js"
+    "test-watch": "jest --watch",
+    "dev-build": "tsc",
+    "dev-watch": "tsx watch src/app.ts",
+    "dev-start": "tsx src/app.ts",
+    "dev-lint": "eslint src --ext .ts",
+    "prod-start": "node dist/app.js",
+    "prod-watch": "nodemon dist/app.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -48,6 +50,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.35.0",
     "@types/bcrypt": "^6.0.0",
     "@types/connect-mongo": "^3.1.2",
     "@types/cors": "^2.8.19",
@@ -58,17 +61,22 @@
     "@types/jest": "^30.0.0",
     "@types/method-override": "^3.0.0",
     "@types/morgan": "^1.9.10",
+    "@types/node": "^24.4.0",
     "@types/nodemailer": "^7.0.0",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/pino": "^7.0.4",
     "@types/supertest": "^6.0.3",
     "@types/swagger-ui-express": "^4.1.8",
+    "eslint": "^9.35.0",
+    "globals": "^16.4.0",
+    "jiti": "^2.5.1",
     "mongodb-memory-server": "^10.2.0",
     "morgan": "^1.10.1",
     "nodemon": "^3.1.10",
     "ts-jest": "^29.4.1",
     "tsx": "^4.20.4",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.43.0"
   }
 }

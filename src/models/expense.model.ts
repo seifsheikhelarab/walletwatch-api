@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema, Types } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export interface IExpense extends Document {
   _id: Types.ObjectId;
@@ -9,14 +9,11 @@ export interface IExpense extends Document {
   CreatedAt: Date;
   UpdatedAt: Date;
   getByCategory(userId: Types.ObjectId, category: string, startDate: Date, endDate: Date): Promise<IExpense[]>;
-  getMonthlySummary(userId: Types.ObjectId, startDate: Date): Promise<Object[]>;
+  getMonthlySummary(userId: Types.ObjectId, startDate: Date): Promise<object[]>;
   getTotalSpent(userId: Types.ObjectId, startDate: Date, endDate: Date): Promise<number>;
 };
 
-
-export interface IExpenseModel extends Model<IExpense> { };
-
-const expenseSchema = new Schema<IExpense, IExpenseModel>({
+const expenseSchema = new Schema<IExpense>({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -58,7 +55,7 @@ expenseSchema.methods.getByCategory = async function (userId: Types.ObjectId, ca
   });
 };
 
-expenseSchema.methods.getMonthlySummary = async function (userId: Types.ObjectId, startDate: Date): Promise<Object[]> {
+expenseSchema.methods.getMonthlySummary = async function (userId: Types.ObjectId, startDate: Date): Promise<object[]> {
   const expenses = await this.model('Expense').find({
     userId,
     CreatedAt: {
@@ -67,11 +64,11 @@ expenseSchema.methods.getMonthlySummary = async function (userId: Types.ObjectId
     }
   });
 
-  let summary: { category: string; amount: number }[] = [];
+  const summary: { category: string; amount: number }[] = [];
   for (const expense of expenses) {
     const category = expense.category;
     const amount = expense.amount;
-    let existingCategory = summary.find((item) => item.category === category);
+    const existingCategory = summary.find((item) => item.category === category);
     if (existingCategory) {
       existingCategory.amount += amount;
     } else {
@@ -94,6 +91,6 @@ expenseSchema.methods.getTotalSpent = async function (userId: Types.ObjectId, st
   return expenses.reduce((total: number, expense: IExpense) => total + expense.amount, 0);
 }
 
-export const Expense = mongoose.model<IExpense, IExpenseModel>('Expense', expenseSchema);
+export const Expense = mongoose.model<IExpense>('Expense', expenseSchema);
 
 export default Expense;

@@ -6,7 +6,7 @@ import {
   loginController,
   logoutController,
   googleCallbackController
-} from "./controllers/auth.controller.ts";
+} from "./controllers/auth.controller.js";
 
 import {
   getExpenses,
@@ -14,7 +14,7 @@ import {
   getOneExpense,
   updateOneExpense,
   deleteOneExpense
-} from "./controllers/expense.controller.ts";
+} from "./controllers/expense.controller.js";
 
 import {
   getBudgets,
@@ -22,7 +22,7 @@ import {
   getOneBudget,
   updateOneBudget,
   deleteOneBudget
-} from "./controllers/budget.controller.ts";
+} from "./controllers/budget.controller.js";
 
 import {
   getGoals,
@@ -30,54 +30,65 @@ import {
   getOneGoal,
   updateOneGoal,
   deleteOneGoal
-} from "./controllers/goal.controller.ts";
+} from "./controllers/goal.controller.js";
 
 import {
   getReports,
   getNotifications
-} from "./controllers/report.controller.ts";
+} from "./controllers/report.controller.js";
 
-import { errorArray } from "./middleware/validation.middleware.ts";
-import { isAuthenticated, isNotAuthenticated } from "./middleware/auth.middleware.ts";
+import {
+  userErrorArray,
+  expenseErrorArray,
+  budgetErrorArray,
+  goalErrorArray
+} from "./middleware/validation.middleware.js";
+
+import {
+  isAuthenticated,
+  isNotAuthenticated
+} from "./middleware/auth.middleware.js";
+
+import { authRateLimit } from "./config/ratelimit.config.js";
 
 export const router = express.Router();
 
 //Auth routes
-router.post("/auth/register",isNotAuthenticated, errorArray, registerController);
-router.post("/auth/login",isNotAuthenticated, errorArray, loginController);
+router.post("/auth/register", authRateLimit, isNotAuthenticated, userErrorArray, registerController);
+router.post("/auth/login", authRateLimit, isNotAuthenticated, userErrorArray, loginController);
 router.post("/auth/logout", isAuthenticated, logoutController);
-router.get('/auth/google',isNotAuthenticated, passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/auth/google', isNotAuthenticated, passport.authenticate('google', { scope: ['profile', 'email'] }));
 router.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/auth/login' }), googleCallbackController);
 
 // Expenses
 router.route("/expenses")
   .get(isAuthenticated, getExpenses)
-  .post(isAuthenticated, addExpense);
+  .post(isAuthenticated, expenseErrorArray, addExpense);
 
 router.route("/expenses/:id")
   .get(isAuthenticated, getOneExpense)
-  .put(isAuthenticated, updateOneExpense)
+  .put(isAuthenticated, expenseErrorArray, updateOneExpense)
   .delete(isAuthenticated, deleteOneExpense);
 
 // Budgets
 router.route("/budgets")
   .get(isAuthenticated, getBudgets)
-  .post(isAuthenticated, setBudget);
+  .post(isAuthenticated, budgetErrorArray, setBudget);
 
 router.route("/budgets/:id")
   .get(isAuthenticated, getOneBudget)
-  .put(isAuthenticated, updateOneBudget)
+  .put(isAuthenticated, budgetErrorArray, updateOneBudget)
   .delete(isAuthenticated, deleteOneBudget);
 
 
 // Goals
 router.route("/goals")
   .get(isAuthenticated, getGoals)
-  .post(isAuthenticated, setGoal);
+  .post(isAuthenticated, goalErrorArray, setGoal);
 
 router.route("/goals/:id")
   .get(isAuthenticated, getOneGoal)
-  .put(isAuthenticated, updateOneGoal)
+  .put(isAuthenticated, goalErrorArray, updateOneGoal)
   .delete(isAuthenticated, deleteOneGoal);
 
 //Reports and Notifications

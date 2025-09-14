@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { logger } from "../config/logger.config.ts";
-import Goal from "../models/goal.model.ts";
+import { logger } from "../config/logger.config.js";
+import Goal from "../models/goal.model.js";
+import { validationResult } from "express-validator";
 
 export const getGoals = async (req: Request, res: Response) => {
   try {
-    let userId = req.session.userId;
-    let goals = await Goal.find({ userId });
+    const userId = req.session.userId;
+    const goals = await Goal.find({ userId });
 
     if (goals.length > 0) {
       res.status(200).json({ goals });
@@ -15,8 +16,8 @@ export const getGoals = async (req: Request, res: Response) => {
       return;
     }
 
-  } catch (error: any) {
-    logger.error(`Error fetching goals: ${error.message}`);
+  } catch (error: unknown) {
+    logger.error(`Error fetching goals: ${error}`);
     res.status(500).json({ message: "Internal server error" });
     return;
   }
@@ -24,15 +25,16 @@ export const getGoals = async (req: Request, res: Response) => {
 
 export const setGoal = async (req: Request, res: Response) => {
   try {
-    let { title, targetAmount, deadline } = req.body;
+    const { title, targetAmount, deadline } = req.body;
 
-    if (typeof title !== "string" || typeof targetAmount !== "number" || typeof deadline !== "string") {
-      res.status(400).json({ message: "Invalid request body" });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ statusCode: 400, message: "Input Validation Error", errors: errors.array() });
       return;
     }
 
-    let userId = req.session.userId;
-    let goal = new Goal({
+    const userId = req.session.userId;
+    const goal = new Goal({
       userId,
       title,
       targetAmount,
@@ -43,8 +45,8 @@ export const setGoal = async (req: Request, res: Response) => {
 
     res.status(201).json({ message: "Goal set successfully", goal });
     return;
-  } catch (error: any) {
-    logger.error(`Error setting goal: ${error.message}`);
+  } catch (error: unknown) {
+    logger.error(`Error setting goal: ${error}`);
     res.status(500).json({ message: "Internal Server Error" });
     return;
   }
@@ -52,10 +54,10 @@ export const setGoal = async (req: Request, res: Response) => {
 
 export async function getOneGoal(req: Request, res: Response) {
   try {
-    let id = req.params.id;
-    let userId = req.session.userId;
+    const id = req.params.id;
+    const userId = req.session.userId;
 
-    let goal = await Goal.findOne({ _id: id, userId });
+    const goal = await Goal.findOne({ _id: id, userId });
 
     if (goal) {
       res.status(200).json({ message: "Goal fetched successfully", goal });
@@ -64,8 +66,8 @@ export async function getOneGoal(req: Request, res: Response) {
       res.status(404).json({ message: "Goal not found" });
       return;
     }
-  } catch (err: any) {
-    logger.error(`Error fetching goal: ${err.message}`);
+  } catch (err: unknown) {
+    logger.error(`Error fetching goal: ${err}`);
     res.status(500).json({ message: "Internal Server Error" });
     return;
   }
@@ -73,17 +75,18 @@ export async function getOneGoal(req: Request, res: Response) {
 
 export async function updateOneGoal(req: Request, res: Response) {
   try {
-    let id = req.params.id;
-    let userId = req.session.userId;
+    const id = req.params.id;
+    const userId = req.session.userId;
 
-    let { title, targetAmount, deadline, status } = req.body;
+    const { title, targetAmount, deadline, status } = req.body;
 
-    if (typeof title !== "string" || typeof targetAmount !== "number" || typeof deadline !== "string" || typeof status !== "string") {
-      res.status(400).json({ message: "Invalid request body" });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ statusCode: 400, message: "Input Validation Error", errors: errors.array() });
       return;
     }
 
-    let goal = await Goal.findOneAndUpdate({ _id: id, userId }, { title, targetAmount, deadline, status }, { new: true });
+    const goal = await Goal.findOneAndUpdate({ _id: id, userId }, { title, targetAmount, deadline, status }, { new: true });
 
     if (goal) {
       res.status(200).json({ message: "Goal updated successfully", goal });
@@ -92,8 +95,8 @@ export async function updateOneGoal(req: Request, res: Response) {
       res.status(404).json({ message: "Goal not found" });
       return;
     }
-  } catch (err: any) {
-    logger.error(`Error updating goal: ${err.message}`);
+  } catch (err: unknown) {
+    logger.error(`Error updating goal: ${err}`);
     res.status(500).json({ message: "Internal Server Error" });
     return;
   }
@@ -101,10 +104,10 @@ export async function updateOneGoal(req: Request, res: Response) {
 
 export async function deleteOneGoal(req: Request, res: Response) {
   try {
-    let id = req.params.id;
-    let userId = req.session.userId;
+    const id = req.params.id;
+    const userId = req.session.userId;
 
-    let goal = await Goal.findOneAndDelete({ _id: id, userId });
+    const goal = await Goal.findOneAndDelete({ _id: id, userId });
 
     if (goal) {
       res.status(200).json({ message: "Goal deleted successfully", goal });
@@ -113,8 +116,8 @@ export async function deleteOneGoal(req: Request, res: Response) {
       res.status(404).json({ message: "Goal not found" });
       return;
     }
-  } catch (err: any) {
-    logger.error(`Error deleting goal: ${err.message}`);
+  } catch (err: unknown) {
+    logger.error(`Error deleting goal: ${err}`);
     res.status(500).json({ message: "Internal Server Error" });
     return;
   }

@@ -1,10 +1,14 @@
 // Configuration for Passport.js to handle OAuth2.0 authentication
 
-import passport from 'passport';
+import passport, { Profile } from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { User } from '../models/user.model.ts';
-import { logger } from './logger.config.ts';
+import { User } from '../models/user.model.js';
+import { logger } from './logger.config.js';
 import { Application } from 'express';
+import dotenv from 'dotenv';
+dotenv.config({ quiet: true });
+
+
 
 export default function passportSetup(app: Application) {
 
@@ -12,7 +16,8 @@ export default function passportSetup(app: Application) {
     app.use(passport.session());
 
 
-    passport.serializeUser((user: any, done) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    passport.serializeUser((user:any, done) => {
         done(null, user.id);
     });
 
@@ -30,17 +35,19 @@ export default function passportSetup(app: Application) {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         callbackURL: process.env.GOOGLE_REDIRECT_URI!,
         scope: ['profile', 'email']
-    }, async (accessToken: string, refreshToken: string, profile: any, done: (error: Error | null, user?: any) => void) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }, async (accessToken: string, refreshToken: string, profile: Profile, done: (error: Error | null, user?: any) => void) => {
         try {
             const user = await findOrCreateUser(profile, 'google');
             return done(null, user);
-        } catch (error: any) {
-            logger.error('Google OAuth error:', error);
+        } catch (error: unknown) {
+            logger.error(error);
             return done(error as Error, undefined);
         }
     }));
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function findOrCreateUser(profile: any, provider: 'google') {
     try {
         let user = await User.findOne({

@@ -2,10 +2,10 @@
 // To-Do: add SQL compatibility
 
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ quiet: true });
 
 import mongoose from "mongoose";
-import { logger } from "./logger.config.ts";
+import { logger } from "./logger.config.js";
 
 export default function databaseSetup() {
 

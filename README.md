@@ -51,11 +51,11 @@ src/
     notification.model.ts # Notification model
     user.model.ts         # User model
     
-  tests/
-    mocks/
+  tests/                  # Jest tests
+    mocks/                # Mocked Libraries
       bcrypt.mock.ts      # Bcrypt mock function
 
-    tests/
+    tests/                # Test directory
       auth.test.ts        # Authentication tests
       budget.test.ts      # Budget tests
       expense.test.ts     # Expense tests

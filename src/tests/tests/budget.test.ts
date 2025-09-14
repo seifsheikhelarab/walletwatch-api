@@ -28,7 +28,7 @@ beforeEach(async () => {
     await collections[key].deleteMany({});
   }
 
-  let befRes = await request(app)
+  const befRes = await request(app)
     .post("/auth/register")
     .send({
       name: "John Doe",
@@ -89,7 +89,7 @@ describe("GET /budgets", () => {
 
 describe("GET /budgets/:id", () => {
   it("should return a 404 if no budget is found", async () => {
-    let id = new mongoose.Types.ObjectId();
+    const id = new mongoose.Types.ObjectId();
     const res = await request(app)
       .get(`/budgets/${id}`)
       .set("Cookie", cookie);
@@ -134,7 +134,7 @@ describe("PUT /budgets/:id", () => {
   })
 
   it("should return a 404 if no budget is found", async () => {
-    let id = new mongoose.Types.ObjectId();
+    const id = new mongoose.Types.ObjectId();
     const res = await request(app)
       .put(`/budgets/${id}`)
       .set("Cookie", cookie)
@@ -180,7 +180,7 @@ describe("DELETE /budgets/:id", () => {
   })
 
   it("should return a 404 if no budget is found", async () => {
-    let id = new mongoose.Types.ObjectId();
+    const id = new mongoose.Types.ObjectId();
     const res = await request(app)
       .delete(`/budgets/${id}`)
       .set("Cookie", cookie);

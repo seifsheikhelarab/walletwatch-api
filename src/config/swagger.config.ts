@@ -1,7 +1,4 @@
 //Configuration for Swagger to generate API documentation
-import dotenv from "dotenv";
-dotenv.config();
-
 import { Application } from "express";
 import swaggerUi from "swagger-ui-express";
 import swaggerDoc from "../../swagger.json" with { type: "json" };

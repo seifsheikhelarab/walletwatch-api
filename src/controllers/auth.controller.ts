@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { logger } from "../config/logger.config.ts";
-import User, { IUser } from "../models/user.model.ts";
+import { logger } from "../config/logger.config.js";
+import User, { IUser } from "../models/user.model.js";
 import { validationResult } from "express-validator";
 
 declare module "express-session" {
@@ -13,24 +13,24 @@ declare module "express-session" {
 export const registerController = async (req: Request, res: Response) => {
   try {
 
-    let { name, email, password, income } = req.body;
+    const { name, email, password, income } = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.status(400).json({ statusCode: 400, errors: errors.array() });
+      res.status(400).json({ statusCode: 400, message: "Input Validation Error", errors: errors.array() });
       return;
     }
 
-    let existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       res.status(409).json({ statusCode: 409, message: "Email already in use" });
       return;
     }
 
-    let user = await User.create({ name, email, password, income });
+    const user = await User.create({ name, email, password, income });
 
     req.session.userId = user._id.toString();
 
-    let returnUser = {
+    const returnUser = {
       name: user.name,
       email: user.email,
       income: user.income,
@@ -42,9 +42,9 @@ export const registerController = async (req: Request, res: Response) => {
     return;
 
 
-  } catch (error: any) {
-    logger.error(`Error registering user: ${error.message}`);
-    res.status(500).json({ statusCode: 500, message: "Internal server error", error: error.message });
+  } catch (error: unknown) {
+    logger.error(`Error registering user: ${error}`);
+    res.status(500).json({ statusCode: 500, message: "Internal server error", error });
     return;
   }
 }
@@ -52,14 +52,14 @@ export const registerController = async (req: Request, res: Response) => {
 export const loginController = async (req: Request, res: Response) => {
   try {
 
-    let { email, password } = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
       res.status(400).json({ statusCode: 400, message: "Email and password are required" });
       return;
     }
 
-    let user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
       res.status(404).json({ statusCode: 404, message: "User not found" });
@@ -72,7 +72,7 @@ export const loginController = async (req: Request, res: Response) => {
 
       logger.info(`User logged in: ${user.email}`);
 
-      let returnUser = {
+      const returnUser = {
         name: user.name,
         email: user.email,
         income: user.income,
@@ -82,8 +82,8 @@ export const loginController = async (req: Request, res: Response) => {
       res.status(200).json({ statusCode: 200, message: "Login successful", user: returnUser });
       return;
     }
-  } catch (error: any) {
-    logger.error(`Error logging in user: ${error.message}`);
+  } catch (error: unknown) {
+    logger.error(`Error logging in user: ${error}`);
     res.status(500).json({ statusCode: 500, message: "Internal server error" });
     return;
   }
@@ -91,22 +91,22 @@ export const loginController = async (req: Request, res: Response) => {
 
 export const logoutController = (req: Request, res: Response) => {
   try {
-    const userId = req.session.userId; // store before destroying
+    const userId = req.session.userId;
 
     req.session.destroy(err => {
       if (err) {
         logger.error(err);
-        return res.status(500).json({ message: "Failed to log out" });
+        return res.status(500).json({ statusCode: 500, message: "Failed to log out" });
       }
 
       res.clearCookie("connect.sid");
-      res.status(200).json({ message: "Logout successful" });
+      res.status(200).json({ statusCode: 200, message: "Logout successful" });
       logger.info(`User logged out: ${userId}`);
     });
 
-  } catch (error: any) {
-    logger.error(`Error logging out user: ${error.message}`);
-    return res.status(500).json({ message: "Internal server error" });
+  } catch (error: unknown) {
+    logger.error(`Error logging out user: ${error}`);
+    return res.status(500).json({ statusCode: 500, message: "Internal server error" });
   }
 };
 
@@ -120,10 +120,10 @@ export const googleCallbackController = async (req: Request, res: Response) => {
     req.session.userId = user._id.toString();
     req.session.isAuthenticated = true;
 
-    res.json({ message: "Google authentication successful", user });
+    res.status(200).json({ statusCode: 200, message: "Google authentication successful", user });
     logger.info(`User logged in via Google: ${user.email}`);
-  } catch (error: any) {
-    logger.error('Google OAuth error:', error);
-    res.status(500).json({ message: "An error occurred during Google authentication" });
+  } catch (error: unknown) {
+    logger.error(`Google OAuth error: ${error}`);
+    res.status(500).json({ statusCode: 500, message: "An error occurred during Google authentication" });
   }
 }

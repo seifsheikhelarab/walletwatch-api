@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema, Types } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export interface IGoal extends Document {
   _id: Types.ObjectId;
@@ -11,9 +11,7 @@ export interface IGoal extends Document {
   isExpired(): boolean;
 }
 
-export interface IGoalModel extends Model<IGoal> { };
-
-const goalSchema = new Schema<IGoal, IGoalModel>({
+const goalSchema = new Schema<IGoal>({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -47,6 +45,6 @@ goalSchema.methods.isExpired = function (): boolean {
   return new Date() > this.deadline;
 };
 
-export const Goal = mongoose.model<IGoal, IGoalModel>('Goal', goalSchema);
+export const Goal = mongoose.model<IGoal>('Goal', goalSchema);
 
 export default Goal;

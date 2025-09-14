@@ -76,7 +76,7 @@ describe("POST /auth/register", () => {
   });
 
   it("should reject registration if email already in use", async () => {
-    const res = await request(app)
+    await request(app)
       .post("/auth/register")
       .send({
         name: "John Doe",
@@ -114,7 +114,7 @@ describe("POST /auth/register", () => {
 
 describe("POST /auth/login", () => {
   it("should log in a user and set session", async () => {
-    const res = await request(app)
+    await request(app)
       .post("/auth/register")
       .send({
         name: "John Doe",
@@ -182,7 +182,7 @@ describe("POST /auth/login", () => {
 
 describe("POST /auth/logout", () => {
   it("should log out a user and clear session", async () => {
-    let res = await request(app)
+    const res = await request(app)
       .post("/auth/register")
       .send({
         name: "John Doe",

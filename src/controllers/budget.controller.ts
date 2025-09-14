@@ -1,33 +1,41 @@
 import { Request, Response } from "express";
-import { logger } from "../config/logger.config.ts";
-import Budget from "../models/budget.model.ts";
+import { logger } from "../config/logger.config.js";
+import Budget from "../models/budget.model.js";
+import { validationResult } from "express-validator";
 
 export const getBudgets = async (req: Request, res: Response) => {
   try {
-    let userId = req.session.userId;
-    let budgets = await Budget.find({ userId });
+    const userId = req.session.userId;
+    const budgets = await Budget.find({ userId });
 
     if (budgets.length > 0) {
-      res.status(200).json({ budgets });
+      res.status(200).json({ statusCode: 200, message: "Budgets fetched successfully", budgets });
       logger.info(`Fetched budgets for user: ${userId}`);
       return;
     } else {
-      res.status(404).json({ message: "No budgets found" });
+      res.status(404).json({ statusCode: 404, message: "No budgets found" });
       return;
     }
 
-  } catch (error: any) {
-    logger.error(`Error fetching budgets: ${error.message}`);
-    res.status(500).json({ message: "Internal server error" });
+  } catch (error: unknown) {
+    logger.error(`Error fetching budgets: ${error}`);
+    res.status(500).json({ statusCode: 500, message: "Internal server error" });
   }
 }
 
 export const setBudget = async (req: Request, res: Response) => {
 
   try {
-    let { amount, startDate, endDate } = req.body;
-    let userId = req.session.userId;
-    let budget = new Budget({
+    const { amount, startDate, endDate } = req.body;
+    const userId = req.session.userId;
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ statusCode: 400, message: "Input Validation Error", errors: errors.array() });
+      return;
+    }
+
+    const budget = new Budget({
       userId,
       amount,
       startDate,
@@ -36,78 +44,79 @@ export const setBudget = async (req: Request, res: Response) => {
 
     await budget.save();
 
-    res.status(201).json({ message: "Budget set successfully", budget });
+    res.status(201).json({ statusCode: 201, message: "Budget set successfully", budget });
     logger.info(`Budget set for user: ${userId}`);
     return;
 
-  } catch (error: any) {
-    logger.error(`Error setting budget: ${error.message}`);
-    res.status(500).json({ message: "Internal Server Error" });
+  } catch (error: unknown) {
+    logger.error(`Error setting budget: ${error}`);
+    res.status(500).json({ statusCode: 500, message: "Internal Server Error" });
     return;
   }
 }
 
 export async function getOneBudget(req: Request, res: Response) {
   try {
-    let id = req.params.id;
-    let userId = req.session.userId;
+    const id = req.params.id;
+    const userId = req.session.userId;
 
-    let budget = await Budget.findOne({ _id: id, userId });
+    const budget = await Budget.findOne({ _id: id, userId });
 
     if (budget) {
       res.status(200).json({ budget });
       logger.info(`Fetched budget for user: ${userId}`);
     } else {
-      res.status(404).json({ message: "Budget not found" });
+      res.status(404).json({ statusCode: 404, message: "Budget not found" });
     }
 
-  } catch (error: any) {
-    logger.error(`Error fetching budget: ${error.message}`);
-    res.status(500).json({ message: "Internal Server Error" });
+  } catch (error: unknown) {
+    logger.error(`Error fetching budget: ${error}`);
+    res.status(500).json({ statusCode: 500, message: "Internal Server Error" });
   }
 }
 
 export async function updateOneBudget(req: Request, res: Response) {
   try {
-    let id = req.params.id;
-    let { amount, startDate, endDate } = req.body;
-    let userId = req.session.userId;
+    const id = req.params.id;
+    const { amount, startDate, endDate } = req.body;
+    const userId = req.session.userId;
 
-    if(typeof amount !== "number" || typeof startDate !== "string" || typeof endDate !== "string") {
-      res.status(400).json({ message: "Invalid request body" });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ statusCode: 400, message: "Input Validation Error", errors: errors.array() });
       return;
     }
 
-    let budget = await Budget.findOneAndUpdate(
+    const budget = await Budget.findOneAndUpdate(
       { _id: id, userId },
       { amount, startDate, endDate },
       { new: true }
     );
 
     if (budget) {
-      res.status(200).json({ message: "Budget updated successfully", budget });
+      res.status(200).json({ statusCode: 200, message: "Budget updated successfully", budget });
     } else {
-      res.status(404).json({ message: "Budget not found" });
+      res.status(404).json({ statusCode: 404, message: "Budget not found" });
     };
-  } catch (error: any) {
-    logger.error(`Error updating budget: ${error.message}`);
-    res.status(500).json({ message: "Internal Server Error" });
+  } catch (error: unknown) {
+    logger.error(`Error updating budget: ${error}`);
+    res.status(500).json({ statusCode: 500, message: "Internal Server Error" });
   }
 }
 
 export async function deleteOneBudget(req: Request, res: Response) {
   try {
-    let id = req.params.id;
-    let userId = req.session.userId;
-    let budget = await Budget.findOneAndDelete({ _id: id, userId });
+    const id = req.params.id;
+    const userId = req.session.userId;
+    const budget = await Budget.findOneAndDelete({ _id: id, userId });
 
     if (budget) {
-      res.status(200).json({ message: "Budget deleted successfully" });
+      res.status(200).json({ statusCode: 200, message: "Budget deleted successfully" });
     } else {
-      res.status(404).json({ message: "Budget not found" });
+      res.status(404).json({ statusCode: 404, message: "Budget not found" });
     }
-  } catch (error: any) {
-    logger.error(`Error deleting budget: ${error.message}`);
-    res.status(500).json({ message: "Internal Server Error" });
+  } catch (error: unknown) {
+    logger.error(`Error deleting budget: ${error}`);
+    res.status(500).json({ statusCode: 500, message: "Internal Server Error" });
   }
 }

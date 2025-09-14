@@ -1,14 +1,15 @@
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ quiet: true });
 
-import databaseSetup from "./config/mongodb.config.ts";
-import middlewareSetup from "./config/middleware.config.ts";
-import passportSetup from "./config/passport.config.ts";
-import swaggerSetup from "./config/swagger.config.ts";
-import schedulerSetup from "./config/scheduler.config.ts";
-import { logger, loggerSetup } from "./config/logger.config.ts";
-import serverSetup from "./config/server.config.ts";
-import { router } from "./routes.ts";
+import databaseSetup from "./config/mongodb.config.js";
+import middlewareSetup from "./config/middleware.config.js";
+import passportSetup from "./config/passport.config.js";
+import swaggerSetup from "./config/swagger.config.js";
+import schedulerSetup from "./config/scheduler.config.js";
+import { logger, loggerSetup } from "./config/logger.config.js";
+import serverSetup from "./config/server.config.js";
+import { router } from "./routes.js";
+import { Response } from "express";
 
 
 // Core configurations
@@ -21,7 +22,7 @@ schedulerSetup();
 loggerSetup(app);
 
 app.use("/", router);
-app.use((req, res) => res.status(404).json({ error: "Not Found" }));
+app.use((res:Response) => res.status(404).json({ error: "Not Found" }));
 
 // Start server
 const port = process.env.PORT || 4650;

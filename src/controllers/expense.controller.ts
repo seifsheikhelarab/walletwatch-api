@@ -1,42 +1,44 @@
 import { Request, Response } from "express";
-import { logger } from "../config/logger.config.ts";
-import User from "../models/user.model.ts";
-import Expense from "../models/expense.model.ts";
+import { logger } from "../config/logger.config.js";
+import User from "../models/user.model.js";
+import Expense from "../models/expense.model.js";
+import { validationResult } from "express-validator";
 
 export const getExpenses = async (req: Request, res: Response) => {
 
   try {
     const userId = req.session.userId;
 
-    let user = await User.findById(userId);
+    const user = await User.findById(userId);
 
-    let expenses = await Expense.find({ userId: user!._id });
+    const expenses = await Expense.find({ userId: user!._id });
 
     if (expenses.length === 0) {
-      res.status(404).json({ message: "No expenses found" });
+      res.status(404).json({ statusCode: 404, message: "No expenses found" });
       return;
     }
 
-    res.status(200).json({ expenses });
+    res.status(200).json({ statusCode: 200, message: "Expenses fetched successfully", expenses });
     return;
 
-  } catch (error: any) {
-    logger.error(`Error fetching expenses: ${error.message}`);
-    res.status(500).json({ message: "Internal server error" });
+  } catch (error: unknown) {
+    logger.error(`Error fetching expenses: ${error}`);
+    res.status(500).json({ statusCode: 500, message: "Internal server error" });
     return;
   }
 }
 
 export const addExpense = async (req: Request, res: Response) => {
   try {
-    let { amount, category, description } = req.body;
+    const { amount, category, description } = req.body;
 
-    if (typeof amount !== "number" || typeof category !== "string" || typeof description !== "string" || amount < 0) {
-      res.status(400).json({ message: "Invalid request body" });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ statusCode: 400, message: "Input Validation Error", errors: errors.array() });
       return;
     }
 
-    let expense = new Expense({
+    const expense = new Expense({
       userId: req.session.userId,
       amount,
       category,
@@ -45,12 +47,12 @@ export const addExpense = async (req: Request, res: Response) => {
 
     await expense.save();
 
-    res.status(201).json({ message: "Expense added successfully", expense });
+    res.status(201).json({ statusCode: 201, message: "Expense added successfully", expense });
     return;
 
-  } catch (error: any) {
-    logger.error(`Error adding expense ${error.message}`);
-    res.status(500).json({ message: "Internal Server Error" });
+  } catch (error: unknown) {
+    logger.error(`Error adding expense ${error}`);
+    res.status(500).json({ statusCode: 500, message: "Internal Server Error" });
     return;
   }
 }
@@ -58,24 +60,24 @@ export const addExpense = async (req: Request, res: Response) => {
 export const getOneExpense = async (req: Request, res: Response) => {
 
   try {
-    let userId = req.session.userId;
-    let id = req.params.id;
+    const userId = req.session.userId;
+    const id = req.params.id;
 
-    let expense = await Expense.findOne({
+    const expense = await Expense.findOne({
       _id: id,
       userId
     });
 
     if (expense) {
-      res.status(200).json({expense});
+      res.status(200).json({ statusCode: 200, message: "Expense fetched successfully", expense });
       return;
     } else {
-      res.status(404).json({ message: "Expense not found" });
+      res.status(404).json({ statusCode: 404, message: "Expense not found" });
       return;
     }
-  } catch (error: any) {
-    logger.error(`Error getting expense ${error.message}`);
-    res.status(500).json({ message: "Internal Server Error" });
+  } catch (error: unknown) {
+    logger.error(`Error getting expense ${error}`);
+    res.status(500).json({ statusCode: 500, message: "Internal Server Error" });
     return;
   }
 }
@@ -83,17 +85,18 @@ export const getOneExpense = async (req: Request, res: Response) => {
 export const updateOneExpense = async (req: Request, res: Response) => {
 
   try {
-    let id = req.params.id;
-    let { amount, category, description } = req.body;
+    const id = req.params.id;
+    const { amount, category, description } = req.body;
 
-    if (typeof amount !== "number" || typeof category !== "string" || typeof description !== "string" || amount < 0) {
-      res.status(400).json({ message: "Invalid request body" });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ statusCode: 400, message: "Input Validation Error", errors: errors.array() });
       return;
     }
 
-    let userId = req.session.userId;
+    const userId = req.session.userId;
 
-    let expense = await Expense.findOneAndUpdate(
+    const expense = await Expense.findOneAndUpdate(
       { _id: id, userId },
       { amount, category, description, UpdatedAt: new Date() });
 
@@ -104,8 +107,8 @@ export const updateOneExpense = async (req: Request, res: Response) => {
       res.status(404).json({ message: "Expense not found" });
       return;
     }
-  } catch (error: any) {
-    logger.error(`Error updating expense: ${error.message}`);
+  } catch (error: unknown) {
+    logger.error(`Error updating expense: ${error}`);
     res.status(500).json({ message: "Internal server error" });
     return;
   }
@@ -114,10 +117,10 @@ export const updateOneExpense = async (req: Request, res: Response) => {
 export const deleteOneExpense = async (req: Request, res: Response) => {
 
   try {
-    let userId = req.session.userId;
-    let id = req.params.id;
+    const userId = req.session.userId;
+    const id = req.params.id;
 
-    let expense = await Expense.findOneAndDelete({ _id: id, userId: userId });
+    const expense = await Expense.findOneAndDelete({ _id: id, userId: userId });
 
     if (expense) {
       res.status(200).json({ message: "Expense deleted successfully", expense });
@@ -126,8 +129,8 @@ export const deleteOneExpense = async (req: Request, res: Response) => {
       res.status(404).json({ message: "Expense not found" });
       return;
     }
-  } catch (error: any) {
-    logger.error(`Error deleting expense: ${error.message}`);
+  } catch (error: unknown) {
+    logger.error(`Error deleting expense: ${error}`);
     res.status(500).json({ message: "Internal server error" });
     return;
   }
