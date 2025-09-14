@@ -7,13 +7,13 @@ import express from "express";
 import methodOverride from "method-override";
 import cors from "cors";
 
-export default function middlewareSetup(app: Application) {
+export default function middlewareSetup(app: Application): void {
 
     app.use(cors());
     app.use(express.urlencoded({ extended: false }));
     app.use(express.json());
 
-    app.use(methodOverride(function (req:Request) {
+    app.use(methodOverride(function (req: Request) {
         if (req.body && typeof req.body === 'object' && '_method' in req.body) {
             const method = req.body._method;
             delete req.body._method;

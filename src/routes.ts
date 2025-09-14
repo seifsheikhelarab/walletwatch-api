@@ -1,5 +1,6 @@
 import express from "express";
 import passport from "passport";
+import { Request, Response } from "express";
 
 import {
   registerController,
@@ -94,3 +95,7 @@ router.route("/goals/:id")
 //Reports and Notifications
 router.get("/reports", isAuthenticated, getReports);
 router.get("/notifications", isAuthenticated, getNotifications);
+
+router.use((req: Request, res: Response) => {
+  res.status(404).json({ error: "Not Found" })
+});

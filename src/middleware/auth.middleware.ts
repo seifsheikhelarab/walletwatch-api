@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 
 
-export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
+export function isAuthenticated(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   if (req.session.userId) {
     next();
     return;
@@ -11,7 +15,11 @@ export function isAuthenticated(req: Request, res: Response, next: NextFunction)
   }
 }
 
-export function isNotAuthenticated(req: Request, res: Response, next: NextFunction) {
+export function isNotAuthenticated
+  (req: Request,
+    res: Response,
+    next: NextFunction
+  ): void {
   if (!req.session.userId) {
     next();
     return;

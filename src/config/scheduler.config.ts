@@ -5,7 +5,7 @@ import { logger } from './logger.config.js';
 import { Notification } from '../models/notification.model.js';
 import Budget from '../models/budget.model.js';
 
-function sendReportEmailMonthly() {
+function sendReportEmailMonthly(): void {
   // Every month on the 1st at 10 AM
   cron.schedule("0 10 1 * *", async () => {
     logger.info('Sending monthly budget report emails...');
@@ -25,7 +25,7 @@ function sendReportEmailMonthly() {
   });
 }
 
-function sendReminderEmailDaily() {
+function sendReminderEmailDaily(): void {
 
   // Every day at 8 PM
   cron.schedule("0 20 * * *", async () => {
@@ -53,7 +53,7 @@ function sendReminderEmailDaily() {
   });
 }
 
-function sendOverspendingAlert() {
+function sendOverspendingAlert(): void {
 
   cron.schedule("0 9 * * *", async () => {
 

@@ -3,14 +3,10 @@ import { logger } from "../config/logger.config.js";
 import User, { IUser } from "../models/user.model.js";
 import { validationResult } from "express-validator";
 
-declare module "express-session" {
-  interface SessionData {
-    userId: string;
-    isAuthenticated?: boolean;
-  }
-}
-
-export const registerController = async (req: Request, res: Response) => {
+export async function registerController(
+  req: Request<object, object, { name: string, email: string, password: string, income: number }>,
+  res: Response
+): Promise<void> {
   try {
 
     const { name, email, password, income } = req.body;
@@ -49,7 +45,10 @@ export const registerController = async (req: Request, res: Response) => {
   }
 }
 
-export const loginController = async (req: Request, res: Response) => {
+export async function loginController(
+  req: Request<object, object, { email: string, password: string }>,
+  res: Response
+): Promise<void> {
   try {
 
     const { email, password } = req.body;
@@ -89,7 +88,9 @@ export const loginController = async (req: Request, res: Response) => {
   }
 }
 
-export const logoutController = (req: Request, res: Response) => {
+export function logoutController(
+  req: Request, res: Response
+): void {
   try {
     const userId = req.session.userId;
 
@@ -106,7 +107,8 @@ export const logoutController = (req: Request, res: Response) => {
 
   } catch (error: unknown) {
     logger.error(`Error logging out user: ${error}`);
-    return res.status(500).json({ statusCode: 500, message: "Internal server error" });
+    res.status(500).json({ statusCode: 500, message: "Internal server error" });
+    return;
   }
 };
 

@@ -3,7 +3,10 @@ import { logger } from "../config/logger.config.js";
 import Goal from "../models/goal.model.js";
 import { validationResult } from "express-validator";
 
-export const getGoals = async (req: Request, res: Response) => {
+export async function getGoals(
+  req: Request,
+  res: Response
+): Promise<void> {
   try {
     const userId = req.session.userId;
     const goals = await Goal.find({ userId });
@@ -23,7 +26,10 @@ export const getGoals = async (req: Request, res: Response) => {
   }
 }
 
-export const setGoal = async (req: Request, res: Response) => {
+export async function setGoal(
+  req: Request<object, object, { title: string; targetAmount: number; deadline: Date }>,
+  res: Response
+): Promise<void> {
   try {
     const { title, targetAmount, deadline } = req.body;
 
@@ -52,7 +58,10 @@ export const setGoal = async (req: Request, res: Response) => {
   }
 }
 
-export async function getOneGoal(req: Request, res: Response) {
+export async function getOneGoal(
+  req: Request<{ id: string }>,
+  res: Response
+): Promise<void> {
   try {
     const id = req.params.id;
     const userId = req.session.userId;
@@ -73,7 +82,10 @@ export async function getOneGoal(req: Request, res: Response) {
   }
 }
 
-export async function updateOneGoal(req: Request, res: Response) {
+export async function updateOneGoal(
+  req: Request<{ id: string }, object, { title: string, targetAmount: number, deadline: Date, status: string }>,
+  res: Response
+): Promise<void> {
   try {
     const id = req.params.id;
     const userId = req.session.userId;
@@ -102,7 +114,10 @@ export async function updateOneGoal(req: Request, res: Response) {
   }
 }
 
-export async function deleteOneGoal(req: Request, res: Response) {
+export async function deleteOneGoal(
+  req: Request<{ id: string }>,
+  res: Response
+): Promise<void> {
   try {
     const id = req.params.id;
     const userId = req.session.userId;

@@ -53,7 +53,7 @@ export const emailTemplates = {
 
 };
 
-export const sendEmail = async (to: string, subject: string, html: string) => {
+export const sendEmail = async (to: string, subject: string, html: string): Promise<nodemailer.SentMessageInfo> => {
     const transporter = nodemailer.createTransport(mailConfig);
     const info = await transporter.sendMail({
         from: `"WalletWatch" <${mailConfig.from}>`,

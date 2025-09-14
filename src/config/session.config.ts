@@ -17,7 +17,7 @@ declare module "express-session" {
 }
 
 
-export default function sessionSetup(app: Application) {
+export default function sessionSetup(app: Application): void {
   const store = MongoStore.create({
     mongoUrl: process.env.MONGO_URI!,
     collectionName: 'sessions',

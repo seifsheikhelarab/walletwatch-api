@@ -9,7 +9,6 @@ import schedulerSetup from "./config/scheduler.config.js";
 import { logger, loggerSetup } from "./config/logger.config.js";
 import serverSetup from "./config/server.config.js";
 import { router } from "./routes.js";
-import { Response } from "express";
 
 
 // Core configurations
@@ -22,7 +21,6 @@ schedulerSetup();
 loggerSetup(app);
 
 app.use("/", router);
-app.use((res:Response) => res.status(404).json({ error: "Not Found" }));
 
 // Start server
 const port = process.env.PORT || 4650;

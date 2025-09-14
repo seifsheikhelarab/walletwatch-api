@@ -2,7 +2,7 @@
 
 import passport, { Profile } from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { User } from '../models/user.model.js';
+import { IUser, User } from '../models/user.model.js';
 import { logger } from './logger.config.js';
 import { Application } from 'express';
 import dotenv from 'dotenv';
@@ -10,7 +10,7 @@ dotenv.config({ quiet: true });
 
 
 
-export default function passportSetup(app: Application) {
+export default function passportSetup(app: Application):void {
 
     app.use(passport.initialize());
     app.use(passport.session());
@@ -48,7 +48,7 @@ export default function passportSetup(app: Application) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function findOrCreateUser(profile: any, provider: 'google') {
+async function findOrCreateUser(profile: any, provider: 'google'):Promise<IUser> {
     try {
         let user = await User.findOne({
             oauthProvider: provider,

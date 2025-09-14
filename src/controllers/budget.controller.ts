@@ -3,7 +3,7 @@ import { logger } from "../config/logger.config.js";
 import Budget from "../models/budget.model.js";
 import { validationResult } from "express-validator";
 
-export const getBudgets = async (req: Request, res: Response) => {
+export async function getBudgets(req: Request, res: Response): Promise<void> {
   try {
     const userId = req.session.userId;
     const budgets = await Budget.find({ userId });
@@ -23,8 +23,10 @@ export const getBudgets = async (req: Request, res: Response) => {
   }
 }
 
-export const setBudget = async (req: Request, res: Response) => {
-
+export async function setBudget(
+  req: Request<object, object, { amount: number, startDate: Date, endDate: Date }>,
+  res: Response
+): Promise<void> {
   try {
     const { amount, startDate, endDate } = req.body;
     const userId = req.session.userId;
@@ -55,7 +57,10 @@ export const setBudget = async (req: Request, res: Response) => {
   }
 }
 
-export async function getOneBudget(req: Request, res: Response) {
+export async function getOneBudget(
+  req: Request<{ id: string }>,
+  res: Response
+): Promise<void> {
   try {
     const id = req.params.id;
     const userId = req.session.userId;
@@ -75,7 +80,10 @@ export async function getOneBudget(req: Request, res: Response) {
   }
 }
 
-export async function updateOneBudget(req: Request, res: Response) {
+export async function updateOneBudget(
+  req: Request<{ id: string }, object, { amount: number, startDate: Date, endDate: Date }>,
+  res: Response
+): Promise<void> {
   try {
     const id = req.params.id;
     const { amount, startDate, endDate } = req.body;
@@ -104,7 +112,10 @@ export async function updateOneBudget(req: Request, res: Response) {
   }
 }
 
-export async function deleteOneBudget(req: Request, res: Response) {
+export async function deleteOneBudget(
+  req: Request<{ id: string }>,
+  res: Response
+): Promise<void> {
   try {
     const id = req.params.id;
     const userId = req.session.userId;

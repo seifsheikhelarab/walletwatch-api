@@ -1,7 +1,7 @@
-import express from "express";
+import express, { Application } from "express";
 import sessionSetup from "./session.config.js";
 
-export default function serverSetup() {
+export default function serverSetup(): Application {
   const app = express();
   app.use(express.json())
   sessionSetup(app);

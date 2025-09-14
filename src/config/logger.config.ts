@@ -22,7 +22,7 @@ export const logger = pino(
     multistream(streams)
 );
 
-export function loggerSetup(app: Application) {
+export function loggerSetup(app: Application): void {
     app.use(morgan("dev"));
     app.use(morgan("combined", {
         stream: fs.createWriteStream("./logs/access.log", { flags: "a" })

@@ -4,8 +4,10 @@ import User from "../models/user.model.js";
 import Expense from "../models/expense.model.js";
 import { validationResult } from "express-validator";
 
-export const getExpenses = async (req: Request, res: Response) => {
-
+export async function getExpenses(
+  req: Request,
+  res: Response
+): Promise<void> {
   try {
     const userId = req.session.userId;
 
@@ -28,7 +30,10 @@ export const getExpenses = async (req: Request, res: Response) => {
   }
 }
 
-export const addExpense = async (req: Request, res: Response) => {
+export async function addExpense(
+  req: Request<object, object, { amount: number, category: string, description: string }>,
+  res: Response
+): Promise<void> {
   try {
     const { amount, category, description } = req.body;
 
@@ -57,8 +62,10 @@ export const addExpense = async (req: Request, res: Response) => {
   }
 }
 
-export const getOneExpense = async (req: Request, res: Response) => {
-
+export async function getOneExpense(
+  req: Request<{ id: string }>,
+  res: Response
+): Promise<void> {
   try {
     const userId = req.session.userId;
     const id = req.params.id;
@@ -82,8 +89,10 @@ export const getOneExpense = async (req: Request, res: Response) => {
   }
 }
 
-export const updateOneExpense = async (req: Request, res: Response) => {
-
+export async function updateOneExpense(
+  req: Request<{ id: string }, object, { amount: number, category: string, description: string }>,
+  res: Response
+): Promise<void> {
   try {
     const id = req.params.id;
     const { amount, category, description } = req.body;
@@ -114,8 +123,10 @@ export const updateOneExpense = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteOneExpense = async (req: Request, res: Response) => {
-
+export async function deleteOneExpense(
+  req: Request<{ id: string }>,
+  res: Response
+): Promise<void> {
   try {
     const userId = req.session.userId;
     const id = req.params.id;

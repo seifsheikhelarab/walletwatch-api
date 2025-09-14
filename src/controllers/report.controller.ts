@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import { logger } from "../config/logger.config.js";
 import { Notification } from "../models/notification.model.js";
 
-export const getReports = async (req: Request, res: Response) => {
+export async function getReports(
+  req: Request,
+  res: Response
+): Promise<void> {
   try {
     const userId = req.session.userId;
 
@@ -20,7 +23,10 @@ export const getReports = async (req: Request, res: Response) => {
   }
 }
 
-export const getNotifications = async (req: Request, res: Response) => {
+export async function getNotifications(
+  req: Request,
+  res: Response
+): Promise<void> {
   try {
     const userId = req.session.userId;
 
